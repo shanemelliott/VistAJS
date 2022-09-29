@@ -7,6 +7,7 @@ var _ = require('underscore');
 var clc = require('cli-color');
 var moment = require('moment');
 var VistaJS = require('./VistaJS');
+const configuration = require('./config');
 var logger = require('bunyan').createLogger({
     name: 'RpcClient',
     level: 'debug'
@@ -55,15 +56,6 @@ function printJsonResult(error, result) {
 
 var context = 'OR CPRS GUI CHART';
 
-var configuration = {
-    context: 'HMP UI CONTEXT',
-    host: '10.2.2.101',
-    port: 9210,
-    accessCode: 'pu1234',
-    verifyCode: 'pu1234!!',
-    localIP: '10.2.2.1',
-    localAddress: 'localhost'
-};
 
 
 // VistaJS.callRpc(logger, configuration, 'ORWDAL32 ALLERGY MATCH', VistaJS.RpcParameter.literal('AMP'), printResult);
@@ -82,7 +74,7 @@ var configuration = {
 // response -> '{"sensitive":{"dfn":167,"logAccess":true,"mayAccess":true,"text":"\\r\\n***RESTRICTED RECORD***\\r\\n* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * \\r\\n* This record is protected by the Privacy Act of 1974 and the Health    *\\r\\n* Insurance Portability and Accountability Act of 1996. If you elect    *\\r\\n* to proceed, you will be required to prove you have a need to know.    *\\r\\n* Accessing this patient is tracked, and your station Security Officer  *\\r\\n* will contact you for your justification.                              *\\r\\n* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * "}}'
 
 
-VistaJS.callRpc(logger, configuration, 'ORWU USERINFO', printResult);
+VistaJS.callRpc(logger, configuration, 'SDES GET USER PROFILE BY DUZ', [VistaJS.RpcParameter.literal('1')],printResult);
 
 // VistaJS.authenticate(logger, configuration, printResult);
 

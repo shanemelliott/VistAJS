@@ -1,0 +1,31 @@
+{
+  "name": "vistajs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "VistaJS.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shanemelliott/VistAJS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shanemelliott/VistAJS/issues"
+  },
+  "homepage": "https://github.com/shanemelliott/VistAJS#readme",
+  "dependencies": {
+    "async": "^3.2.4",
+    "bunyan": "^1.8.15",
+    "cli-color": "^2.0.3",
+    "install": "^0.13.0",
+    "moment": "^2.29.4",
+    "net": "^1.0.2",
+    "node-cache": "^5.1.2",
+    "underscore": "^1.13.6",
+    "underscore.string": "^3.3.6",
+    "util": "^0.12.4"
+  }
+}
