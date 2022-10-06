@@ -1,0 +1,23 @@
+version: "3"
+services:
+  iris:
+    container_name: iris
+    hostname: iris
+    init: true
+    image: containers.intersystems.com/intersystems/irishealth:2020.1.3.521.0
+    ports:
+      - 52773:52773
+      - 1972:1972
+      - 9093:19301
+      - 9096:18301
+    environment:
+      - ISC_CPF_MERGE_FILE=/dur/merge/merge.cpf
+      - ISC_DATA_DIRECTORY=/dur/iris_conf.d
+    volumes:
+      - type: bind
+        source: ~/vista
+        target: /dur
+networks:
+  esc_net:
+    driver: bridge
+    external: true
