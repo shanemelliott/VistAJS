@@ -1,9 +1,7 @@
 version: "3.6"
 services:
   iris:
-    build: 
-      context: .
-      dockerfile: ${DOCKERFILE:-Dockerfile}
+    build: .
     container_name: iris
     hostname: iris
     init: true
@@ -19,4 +17,9 @@ services:
       - type: bind
         source: ~/vista
         target: /dur
+      - type: bind
+        source: /usr/share/zoneinfo/America/New_York
+        target: /etc/localtime 
       #- ~/iris.key:/usr/irissys/mgr/iris.key
+    # [/usr/sbin/xinetd -pidfile /run/xinetd.pid -stayalive -inetd_compat]  
+

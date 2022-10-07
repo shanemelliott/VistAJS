@@ -1,0 +1,21 @@
+#default:on
+#vistalink connection
+#
+#
+service stg_vlk
+{
+        type = UNLISTED
+        disable = no
+        flags = REUSE
+        socket_type = stream
+        protocol = tcp
+        port = 18301
+        wait = no
+        user = irisowner
+        env = TZ=/etc/localtime
+        server = /usr/bin/irissession
+        server_args = iris -ci -U VISTA CACHELNX^XOBVTCP
+        instances = UNLIMITED
+        per_source = UNLIMITED
+}
+~
