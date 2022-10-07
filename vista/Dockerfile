@@ -1,12 +1,12 @@
-# ARG IMAGE=containers.intersystems.com/intersystems/irishealth:2020.1.3.521.0
-ARG IMAGE=intersystemsdc/iris-community
+ARG IMAGE=containers.intersystems.com/intersystems/irishealth:2020.1.3.521.0
+# ARG IMAGE=containers.intersystems.com/intersystems/iris-community:2022.1.0.209.0
 FROM $IMAGE
 
 USER root
-# WORKDIR /opt/irisapp
+
 # RUN chown ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /opt/irisapp
 RUN apt-get update \
-    && apt-get -y install xinetd vim
+     && apt-get -y install xinetd vim
 COPY stg_rpc /etc/xinetd.d/stg_rpc
 COPY stg_vlk /etc/xinetd.d/stg_vlk
 
