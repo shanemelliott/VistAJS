@@ -2,6 +2,8 @@ version: "3.6"
 services:
   iris:
     build: .
+    # command: -a /xinetd.sh
+    command: --check-caps false -a /xinetd.sh
     container_name: iris
     hostname: iris
     init: true
@@ -21,5 +23,5 @@ services:
         source: /usr/share/zoneinfo/America/New_York
         target: /etc/localtime 
       #- ~/iris.key:/usr/irissys/mgr/iris.key
-    # [/usr/sbin/xinetd -pidfile /run/xinetd.pid -stayalive -inetd_compat]  
+ 
 
