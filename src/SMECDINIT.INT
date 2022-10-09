@@ -1,0 +1,95 @@
+ROUTINE SMECDINIT [Type=INT]
+ ;FROM https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
+
+EN ; [Public; called by KIDS; do everything in this file]
+ D MES^XPDUTL("")
+ D MES^XPDUTL("Codespace VistA ex Init")
+ D MES^XPDUTL("Provider "_$$PROV(1))
+ Q
+
+PROV(rePopulate) ;[Public $$] Create Generic Provider for Synthetic Patients
+ ; ASSUMPTION: DUZ MUST HAVE XUMGR OTHERWISE FILEMAN WILL BLOCK YOU!
+ N NAME S NAME="PROVIDER,UNKNOWN SYNTHEA" ; Constant
+ n C0XIEN s C0XIEN=$O(^VA(200,"B",NAME,0))
+ if C0XIEN,'$get(rePopulate) quit C0XIEN
+ if C0XIEN,$get(rePopulate) do
+ . new DA,DIK
+ . set DA=C0XIEN
+ . set DIK="^VA(200,"
+ . do ^DIK
+ . kill C0XIEN
+ . set C0XIEN(1)=DA
+ ;
+ N C0XFDA,C0XERR,DIERR
+ S C0XFDA(200,"?+1,",.01)=NAME
+ S C0XFDA(200,"?+1,",1)="USP" ; Initials
+ S C0XFDA(200,"?+1,",28)=100 ; Mail Code
+ S C0XFDA(200,"?+1,",53.1)=1 ; Authorized to write meds
+ S C0XFDA(200.05,"?+2,?+1,",.01)="`144" ; Person Class - Allopathic docs.
+ S C0XFDA(200.05,"?+2,?+1,",2)=2000101 ; Date active
+ ;
+ ; Security keys
+ S C0XFDA(200.051,"?+3,?+1,",.01)="PROVIDER"
+ S C0XFDA(200.051,"?+4,?+1,",.01)="ORES"
+ S C0XFDA(200.051,"?+10,?+1,",.01)="LRLAB"
+ S C0XFDA(200.051,"?+11,?+1,",.01)="LRVERIFY"
+ ;
+ ; Access and Verify Codes so we can log in as the provider if we want to
+ ; We must pre-hash them as that's not in the IT
+ S C0XFDA(200,"?+1,",2)=$$EN^XUSHSH("SYNPROV123") ; ac
+ S C0XFDA(200,"?+1,",11)=$$EN^XUSHSH("SYNPROV123!!") ; vc
+ S C0XFDA(200,"?+1,",7.2)=1 ; verify code never expires
+ ;
+ ; Electronic Signature
+ ; Input transform hashes this guy
+ S C0XFDA(200,"?+1,",20.4)="123456"
+ ;
+ ; Primary Menu
+ S C0XFDA(200,"?+1,",201)="`"_$$FIND1^DIC(19,,"QX","XUCORE","B")
+ ;
+ ; Secondary Menu (CPRS, etc)
+ S C0XFDA(200.03,"?+5,?+1,",.01)="`"_$$FIND1^DIC(19,,"QX","OR CPRS GUI CHART","B")
+ ;
+ ; Restrict Patient Selection
+ S C0XFDA(200,"?+1,",101.01)="NO"
+ ;
+ ; CPRS Tabs
+ S C0XFDA(200.010113,"?+6,?+1,",.01)="COR"
+ S C0XFDA(200.010113,"?+6,?+1,",.02)="T-1"
+ ;
+ ; Service/Section
+ S C0XFDA(200,"?+1,",29)="`"_$$MEDSS()
+ ;
+ ; NPI - Ferdi made this one up.
+ S C0XFDA(200,"?+1,",41.99)="9990000348"
+ ;
+ N DIC S DIC(0)="" ; An XREF in File 200 requires this.
+ D UPDATE^DIE("E",$NA(C0XFDA),$NA(C0XIEN),$NA(C0XERR)) ; Typical UPDATE
+ I $D(DIERR) S $EC=",U1,"
+ ;
+ ; Fix verify code change date to the far future
+ N FDA
+ S FDA(200,C0XIEN(1)_",",11.2)=$$FMTH^XLFDT($$FMADD^XLFDT(DT,3000))
+ ;
+ ; Signature block. Do this as internal values to prevent name check in 20.2.
+ S FDA(200,C0XIEN(1)_",",20.2)="SYNTHETIC PROVIDER, MD"
+ S FDA(200,C0XIEN(1)_",",20.3)="Staff Physician"
+ ;
+ D FILE^DIE(,$NA(FDA))
+ I $D(DIERR) S $EC=",U1,"
+ ;
+ Q C0XIEN(1) ;Provider IEN
+
+MEDSS() ; [Public $$] Create Medical Service/Section
+ N NAME S NAME="MEDICINE"
+ Q:$O(^DIC(49,"B",NAME,0)) $O(^(0))
+ ;
+ N FDA,IEN,DIERR
+ S FDA(49,"?+1,",.01)=NAME
+ S FDA(49,"?+1,",1)="MED"
+ S FDA(49,"?+1,",1.5)="MED"
+ S FDA(49,"?+1,",1.7)="PATIENT CARE"
+ D UPDATE^DIE("E",$NA(FDA),$NA(IEN))
+ I $D(DIERR) S $EC=",U1,"
+ QUIT IEN(1)
+ 
