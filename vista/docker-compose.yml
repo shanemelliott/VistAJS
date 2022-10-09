@@ -1,0 +1,27 @@
+version: "3.6"
+services:
+  iris:
+    build: .
+    # command: -a /xinetd.sh
+    command: --check-caps false -a /xinetd.sh
+    container_name: iris
+    hostname: iris
+    init: true
+    ports:
+      - 52773:52773
+      - 1972:1972
+      - 9093:19301
+      - 9096:18301
+    environment:
+      - ISC_CPF_MERGE_FILE=/dur/merge/merge.cpf
+      - ISC_DATA_DIRECTORY=/dur/iris_conf.d
+    volumes:
+      - type: bind
+        source: ~/vista
+        target: /dur
+      - type: bind
+        source: /usr/share/zoneinfo/America/New_York
+        target: /etc/localtime 
+      #- ~/iris.key:/usr/irissys/mgr/iris.key
+ 
+
