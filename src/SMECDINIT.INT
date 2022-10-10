@@ -7,7 +7,7 @@ EN ; [Public; called by KIDS; do everything in this file]
  D MES^XPDUTL("Provider "_$$PROV(1))
  Q
 
-PROV(rePopulate) ;[Public $$] Create Generic Provider for Synthetic Patients
+PROV(rePopulate) ;[Public $$] Create Generic User (provider
  ; ASSUMPTION: DUZ MUST HAVE XUMGR OTHERWISE FILEMAN WILL BLOCK YOU!
  N NAME S NAME="PROVIDER,UNKNOWN SYNTHEA" ; Constant
  n C0XIEN s C0XIEN=$O(^VA(200,"B",NAME,0))
