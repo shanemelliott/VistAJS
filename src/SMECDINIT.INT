@@ -1,4 +1,4 @@
-ROUTINE SMECDINIT [Type=INT]
+ROUTINE SMEINIT [Type=INT]
  ;FROM https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
 
 EN ; [Public; called by KIDS; do everything in this file]
@@ -9,7 +9,7 @@ EN ; [Public; called by KIDS; do everything in this file]
 
 PROV(rePopulate) ;[Public $$] Create Generic User (provider
  ; ASSUMPTION: DUZ MUST HAVE XUMGR OTHERWISE FILEMAN WILL BLOCK YOU!
- N NAME S NAME="PROVIDER,UNKNOWN SYNTHEA" ; Constant
+ N NAME S NAME="PROVIDER,vISTAJS" ; Constant
  n C0XIEN s C0XIEN=$O(^VA(200,"B",NAME,0))
  if C0XIEN,'$get(rePopulate) quit C0XIEN
  if C0XIEN,$get(rePopulate) do
@@ -36,8 +36,8 @@ PROV(rePopulate) ;[Public $$] Create Generic User (provider
  ;
  ; Access and Verify Codes so we can log in as the provider if we want to
  ; We must pre-hash them as that's not in the IT
- S C0XFDA(200,"?+1,",2)=$$EN^XUSHSH("SYNPROV123") ; ac
- S C0XFDA(200,"?+1,",11)=$$EN^XUSHSH("SYNPROV123!!") ; vc
+ S C0XFDA(200,"?+1,",2)=$$EN^XUSHSH("VISTAJS123") ; ac
+ S C0XFDA(200,"?+1,",11)=$$EN^XUSHSH("VISTAJS123!!") ; vc
  S C0XFDA(200,"?+1,",7.2)=1 ; verify code never expires
  ;
  ; Electronic Signature

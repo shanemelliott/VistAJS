@@ -2,6 +2,7 @@ version: "3.6"
 services:
   iris:
     build: .
+    # if you use a licnsed version of iris you meay need to switch the below.
     # command: -a /xinetd.sh
     command: --check-caps false -a /xinetd.sh
     container_name: iris
@@ -22,6 +23,7 @@ services:
       - type: bind
         source: /usr/share/zoneinfo/America/New_York
         target: /etc/localtime 
-      #- ~/iris.key:/usr/irissys/mgr/iris.key
+      # for adding licnese in licnsed version.  
+      #- ~/vista/iris.key:/dur/iris_conf.d/mgr/iris.key
  
 
