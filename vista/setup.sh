@@ -6,7 +6,7 @@ FILE=~/vista/dat/vista/IRIS.DAT
 # s3 URL: iris-1-3-13.s3.us-west-2.amazonaws.com
 # FOI URL: foia-vista.worldvista.org/DBA_VistA_FOIA_System_Files/DBA_VISTA_FOIA_2022/
 URL=iris-1-3-13.s3.us-west-2.amazonaws.com
-ZIP=iris-dat.zip
+ZIP=DBA_VISTA_FOIA_COMP_20220907.zip
 if [ -f "$FILE" ]; then
     docker-compose up #-d remove comment to not run in shell. 
 else 
