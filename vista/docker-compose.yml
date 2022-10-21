@@ -3,7 +3,7 @@ services:
   iris:
     build: .
     # if you use a licnsed version of iris you meay need to switch the below.
-    # command: -a /xinetd.sh
+    #command: -a /xinetd.sh
     command: --check-caps false -a /xinetd.sh
     container_name: iris
     hostname: iris

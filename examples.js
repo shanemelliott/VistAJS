@@ -74,8 +74,8 @@ var context = 'OR CPRS GUI CHART';
 // response -> '{"sensitive":{"dfn":167,"logAccess":true,"mayAccess":true,"text":"\\r\\n***RESTRICTED RECORD***\\r\\n* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * \\r\\n* This record is protected by the Privacy Act of 1974 and the Health    *\\r\\n* Insurance Portability and Accountability Act of 1996. If you elect    *\\r\\n* to proceed, you will be required to prove you have a need to know.    *\\r\\n* Accessing this patient is tracked, and your station Security Officer  *\\r\\n* will contact you for your justification.                              *\\r\\n* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * "}}'
 
 
+//VistaJS.callRpc(logger, configuration, 'ORWPT PTINQ', [VistaJS.RpcParameter.literal('237')],printResult);
 VistaJS.callRpc(logger, configuration, 'SDES GET USER PROFILE BY DUZ', [VistaJS.RpcParameter.literal('1')],printResult);
-
 // VistaJS.authenticate(logger, configuration, printResult);
 
 // VistaJS.callRpc(logger, configuration, 'VPR GET PATIENT DATA JSON', { '"patientId"': '8', '"domain"': 'allergy' }, printResult);

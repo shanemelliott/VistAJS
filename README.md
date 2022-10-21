@@ -30,11 +30,13 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
 
 # FOIA and Access / Verify Code
 
- - The JS library in this repo will not work with the FOIA version of Vista.  It has to do with the FOIA version not having the VA encryption.  I am working on a way to fix. 
+ - The JS library in this repo will not work with the FOIA version of Vista.  It has to do with the FOIA version not having the VA encryption. More information can be found [here](https://groups.google.com/g/hardhats/c/egI15djGp5A/m/ZuWf785pQy0J).  I have included a copy from this thread in this repo [xusrb1.xml](/vista/xusrb1.xml).  I will post a script to import and compile but you can do manually for now.  
+
 # ToDo
 
- - Fix FOIA Acces/Verify Code issue. 
- - I will be adding the creatino of an account and the use of VistAJS to this VistA system look for work in the src directory. I am using some work from [VistA FHIR dataloader](https://github.com/WorldVistA/VistA-FHIR-Data-Loader)
- - For some reason when you run setup.sh sometimes it does not launch IRIS correctly, running docker compse up a second time works. Need to look into this. 
+ - [x] Fix FOIA Acces/Verify Code issue. 
+
+ - [ ] I will be adding the creatino of an account and the use of VistAJS to this VistA system look for work in the src directory. I am using some work from [VistA FHIR dataloader](https://github.com/WorldVistA/VistA-FHIR-Data-Loader)
+  - [ ] For some reason when you run setup.sh sometimes it does not launch IRIS correctly, running docker compse up a second time works. Need to look into this. 
 
     
