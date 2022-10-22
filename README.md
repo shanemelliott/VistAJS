@@ -40,7 +40,7 @@ This repository has an implementation that will run the FOIA version of VistA fo
 
 # Xinetd
 
-The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is one change necessare if you switch from the community version to a licnesed version of Iris.  irissession is located in a different location for each.  look for more info in the stg_rpc and stg_vlk files in the vista directory.
+The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is one change necessary if you switch from the community version to a licnesed version of Iris.  irissession is located in a different location for each.  Look for more info in the stg_rpc and stg_vlk files in the vista directory.
 
 # FOIA and Access / Verify Code
 
