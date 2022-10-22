@@ -9,17 +9,10 @@ RUN apt-get update \
      && apt-get -y install xinetd vim
 COPY stg_rpc /etc/xinetd.d/stg_rpc
 COPY stg_vlk /etc/xinetd.d/stg_vlk
-COPY xusrb1.xls /tmp/
+COPY xusrb1.xml /tmp/xusrb1.xml
 COPY xinetd.sh /xinetd.sh
-# Reference for todo later.
-#d $System.OBJ.Load("/home/kazamatzuri/deplgbl.xml")
-# D D COMPILE^%RCOMPIL("XUSRB1","INT")
+COPY xusrb1fix.script /tmp/xusrb1fix.script
+COPY xusrb1fix.sh /tmp/xusrb1fix.sh
+RUN chmod +x /tmp/xusrb1fix.sh
 USER ${ISC_PACKAGE_MGRUSER}
 
-# COPY  module.xml .  
-# COPY iris.script /tmp/iris.script
-
-# run iris and script
-# RUN iris start IRIS \
-#	&& iris session IRIS < /tmp/iris.script \
-#    && iris stop IRIS quietly

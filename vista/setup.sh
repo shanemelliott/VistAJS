@@ -3,6 +3,7 @@ FILE=~/vista/dat/vista/IRIS.DAT
 # FOIA Version: DBA_VISTA_FOIA_2022/DBA_VISTA_FOIA_20220907.zip
 # Compact FOIA Version:DBA_VISTA_FOIA_COMP_20220907.zip
 # Internal Version: iris-dat.zip
+# Internal newer version (needs to be renamed - see below): iris.zip
 # s3 URL: iris-1-3-13.s3.us-west-2.amazonaws.com
 # FOI URL: foia-vista.worldvista.org/DBA_VistA_FOIA_System_Files/DBA_VISTA_FOIA_2022/
 URL=iris-1-3-13.s3.us-west-2.amazonaws.com
