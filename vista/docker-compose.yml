@@ -13,6 +13,7 @@ services:
       - 1972:1972
       - 9093:19301
       - 9096:18301
+      - 7041:7041
     environment:
       - ISC_CPF_MERGE_FILE=/dur/merge/merge.cpf
       - ISC_DATA_DIRECTORY=/dur/iris_conf.d
