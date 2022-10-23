@@ -1,7 +1,7 @@
 module.exports = {
     context: '',
-    host: '',
-    port: 0,
+    host: 'localhost',
+    port: 9093,
     accessCode: '',
     verifyCode: '',
     localIP: '',
