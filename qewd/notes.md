@@ -18,6 +18,12 @@ https://github.com/robtweed/qewd-starter-kit-iris-networked
 6) Advertize port on iris.
 7) docker pull rtweed/qewd-server
     docker run -it --name qewd --rm -p 3000:8080 -v /home/codespace/vista/qewd:/opt/qewd/mapped rtweed/qewd-server
+8)  npm install ewdvistaterm (https://github.com/robtweed/ewdVistATerm)
+9)mkdir www/VistATerm
+10) cp node_modules/ewdvistaterm/terminal/* www/VistaTerm
+
+
+
 
 
 docker run -it --name qewd --rm --net=vista_default -p 3000:8080 -v /home/codespace/vista/qewd:/opt/qewd/mapped rtweed/qewd-server
