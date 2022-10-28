@@ -46,21 +46,17 @@ else
     sudo chmod 775 ~/vista/dat/vista/IRIS.DAT
     sudo chown 51773:51773 ~/vista/dat/vista/IRIS.DAT
     cp ./bashrc ~/.bashrc
-    alias iris='docker exec -it iris bash'
-    alias prog='docker exec -it iris iris session iris -U VISTA'
-    alias PROG='docker exec -it iris iris session iris -U VISTA'
-    alias vista='docker exec -it iris iris session iris -U VISTA "^ZU"'
-    alias VISTA='docker exec -it iris iris session iris -U VISTA "^ZU"'
     docker-compose up -d --build
     echo "waiting for iris to start..... this may take a minute.."
+    echo "source your .bashrc file to add aliases"
     while ! is_healthy iris; do sleep 1; done
     echo "iris up importing some routines (see access/verify in readme)"
-    docker exec iris /tmp/xusrb1fix.sh #> /dev/null
+    docker exec iris /tmp/xusrb1fix.sh > /dev/null
     read -p "Import initial user? (y/n)" CONT
     if [ "$CONT" = "y" ]; then
         echo "Creating user with Access Code:VISTAJS123 / Verify Code:VISTAJS123!!";
         # Import sctip and run. :TODO:
-        docker exec iris /tmp/CreateUser.sh #> /dev/null
+        docker exec iris /tmp/CreateUser.sh > /dev/null
     else
     echo "ok then, all set up";
     fi

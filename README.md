@@ -1,7 +1,8 @@
 # VistAJS
 This is a javascript version of VistA RPC broker from [eHMP](https://github.com/KRMAssociatesInc/eHMP).  It can be used to make RPC calls against VistA. 
 
-after setting up codespaces (outlined below) and creatign a config.js file, try the following.  You can run this from a terminal in the codespace if you are on a browser....OR from your workstation if you are running the codespace in VS Code on your workstation. If you are running the codespace from your workstation the ports are mapped to localhost automatically. 
+
+After setting up codespaces (outlined below), try the following.  You can run this from a terminal in the codespace if you are on a browser....OR from your workstation if you are running the codespace in VS Code on your workstation. If you are running the codespace from your workstation the ports are mapped to localhost automatically. 
 
 ```
 node index.js
@@ -18,6 +19,7 @@ This repository has an implementation that will run the FOIA version of VistA fo
   - Unfortunatly the VA has made the FOIA Version of VistA too large for the community version of Intersystems IRIS. I have compacted the latest version and this repo uses that by default (2022_09_07).  But you can use any version of VistA you would like or uncomment the FOIA version if you have a licnesed version of iris. 
   
    - ** Update - I have been talking to the VA staff that releases FOIA version about defragging / compacting / truncating it before posting.  
+   
   - To RESET VistA back to the begiining run the reset.sh script. <-- This deletes everything!
 
   # Accessing Management portal of Intersystems
@@ -30,6 +32,7 @@ This repository has an implementation that will run the FOIA version of VistA fo
 
   # Logging into VistA
 
+    After the setup script has run, source your .bashhrc to add the follwoing aliases or start a new shell.
 
   - You can log into VistA with the following from the shell prompt.
 
