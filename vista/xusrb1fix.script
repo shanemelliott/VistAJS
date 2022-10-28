@@ -1,5 +1,9 @@
  ; load the correct version of XUSRB1
  zn "VISTA"
  d $System.OBJ.Load("/tmp/xusrb1.xml")
- ;compile XUSRB1
+ ;load SMEINT to create initial user
+ d $System.OBJ.Load("/tmp/smeint.xml")
+ ;compile XUSRB1,SMEINT
  D COMPILE^%RCOMPIL("XUSRB1","INT")
+ D COMPILE^%RCOMPIL("SMEINT","INT")
+ Q

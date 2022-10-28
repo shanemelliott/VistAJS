@@ -95,6 +95,7 @@ alias l='ls -CF'
 
 alias iris='docker exec -it iris bash'
 alias vista='docker exec -it iris iris session iris -U VISTA'
+alias VISTA='docker exec -it iris iris session iris -U VISTA'
 
 
 # Add an "alert" alias for long running commands.  Use like so:

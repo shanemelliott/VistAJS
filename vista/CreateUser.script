@@ -1,0 +1,8 @@
+ ; Setting DUZ to user 1, most versions this user has XUMGR
+ ; If this does not work, you need a user with XUMGR to create the test provider
+ ;
+ ZN "VISTA"
+ S DUZ=1,DUZ(0)="@",U="^"
+ ; Routine imported during setup
+ D EN^SMEINT
+ Q

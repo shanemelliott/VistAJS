@@ -3,6 +3,7 @@
 <Routine name="XUSRB1" type="INT" languagemode="0" timestamp="61787,24896"><![CDATA[
 XUSRB1 ;iscSF/RWF - More Request Broker ;6/8/04  16:41
  ;;8.0;KERNEL;**28,82,135,275**;Jul 10, 1995
+ ; Fix for Access/Verify Cipher issue see:https://groups.google.com/g/hardhats/c/egI15djGp5A/m/ZuWf785pQy0J
  Q  ;No entry from top
  ;
 DECRYP(S) ;decrypt passed string
