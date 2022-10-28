@@ -13,11 +13,11 @@ node index.js
 
 This repository has an implementation that will run the FOIA version of VistA for testing VistAJS. See the /vista directory in the repo. 
 
-  - Run setup.sh to download the FOIA version of VistA and start community version of Intersytems IRIS. *Update: This script will create a generic Provider user and then run VistJS to verify successful install. 
+  - Run setup.sh to download the FOIA version of VistA and start community version of Intersytems IRIS. *Update: This script will create a generic Provider user and then run VistJS to verify successful install. The routine I used to do this is from https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
   
   - Unfortunatly the VA has made the FOIA Version of VistA too large for the community version of Intersystems IRIS. I have compacted the latest version and this repo uses that by default (2022_09_07).  But you can use any version of VistA you would like or uncomment the FOIA version if you have a licnesed version of iris. 
   
-   - ** Update - I have been talking to the VA staff thatreleases FOIA version about defragging / compacting / truncating it before posting.  
+   - ** Update - I have been talking to the VA staff that releases FOIA version about defragging / compacting / truncating it before posting.  
   - To RESET VistA back to the begiining run the reset.sh script. <-- This deletes everything!
 
   # Accessing Management portal of Intersystems
@@ -49,12 +49,6 @@ This repository has an implementation that will run the FOIA version of VistA fo
       ``
         iris
       ``
-
-
-  - Or some shortcuts from the bash shell:
-    - vista: launches the M shell in the VISTA db.
-    - iris: launches a bash shell in the iris docker container.
-
 
 # Xinetd
 
