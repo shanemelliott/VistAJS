@@ -46,6 +46,8 @@ else
     sudo chmod 775 ~/vista/dat/vista/IRIS.DAT
     sudo chown 51773:51773 ~/vista/dat/vista/IRIS.DAT
     cp ./bashrc ~/.bashrc
+    alias iris='docker exec -it iris bash'
+    export BASH_ENV=“$HOME/.bashrc”
     docker-compose up -d --build
     echo "waiting for iris to start..... this may take a minute.."
     while ! is_healthy iris; do sleep 1; done

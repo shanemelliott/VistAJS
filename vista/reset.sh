@@ -4,7 +4,6 @@ if [ "$CONT" = "y" ]; then
   echo "Deleteing ~/vista directory, run setup.sh to start over";
   docker stop iris
   docker rm iris
-  docker image prune -f
   sudo rm -rf ~/vista
 else
   echo "ok then, not doing anything";

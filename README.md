@@ -31,11 +31,26 @@ This repository has an implementation that will run the FOIA version of VistA fo
   # Logging into VistA
 
 
-  - You can log into VistA with the following command: 
+  - You can log into VistA with the following from the shell prompt.
 
-``
-   docker exec -it iris iris session iris -U VISTA '^ZU'
-``
+      ``
+        vista
+      ``
+  
+  # Shortcuts
+
+  - You can get to the Mumps direct prompt with the following from the shell prompt. 
+
+      ``
+        prog
+      ``
+  - you can get to the iris container by typing the following from the shell prompt.
+  
+      ``
+        iris
+      ``
+
+
   - Or some shortcuts from the bash shell:
     - vista: launches the M shell in the VISTA db.
     - iris: launches a bash shell in the iris docker container.
