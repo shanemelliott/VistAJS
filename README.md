@@ -2,17 +2,20 @@
 This is a javascript version of VistA RPC broker from [eHMP](https://github.com/KRMAssociatesInc/eHMP).  It can be used to make RPC calls against VistA. 
 
 after setting up codespaces (outlined below) and creatign a config.js file, try the following.  You can run this from a terminal in the codespace if you are on a browser....OR from your workstation if you are running the codespace in VS Code on your workstation. If you are running the codespace from your workstation the ports are mapped to localhost automatically. 
-```
-   node examples.js
 
 ```
-- Please remember you need a valid user with a valid Access / Verify Code.  DEpending on the version of VistA you are using that will vary. 
+   node index.js
+
+```
+
+- Please remember you need a valid user with a valid Access / Verify Code.  Depending on the version of VistA you are using that will vary. 
 
 # Codespace verision of VistA. 
 
 This repository has an implementation that will run the FOIA version of VistA for testing VistAJS. See the /vista directory in the repo. 
 
-  - run setup.sh to download the FOIA version of VistA and start community version of Intersytems IRIS. 
+  - run setup.sh to download the FOIA version of VistA and start community version of Intersytems IRIS. *Update: This script will create a generic Provider user and then run VistJS to verify successful install. 
+  
   - Unfortunatly the VA has made the FOIA Version of VistA too large for the community version of Intersystems IRIS. I have compacted the latest version and this repo uses that by default (2022_09_07).  But you can use any version of VistA you would like or uncomment the FOIA version if you have a licnesed version of iris. 
   
    - ** Update - I have been talking to the VA staff thatreleases FOIA version about defragging / compacting / truncating it before posting.  
@@ -47,21 +50,10 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
 
  - The JS library in this repo will not work with the FOIA version of Vista.  It has to do with the FOIA version not having the VA encryption. More information can be found [here](https://groups.google.com/g/hardhats/c/egI15djGp5A/m/ZuWf785pQy0J).  I have included a copy from this thread in this repo [xusrb1.xml](/vista/xusrb1.xml). Below is a scrit to fix this.  
 
- - log into the iris container with 'iris' from a bash shell in vscode, then run '/tmp/xusrb1fix.sh'
+ - on Docker container /tmp/xusrb1fix.sh.  Update: I have included this in the setup.sh script so there is no need to run this independently. 
 
- or 
- 
-  - just run the following from the codespace shell
 
- ``
-  docker exec iris /tmp/xusrb1fix.sh
-``
 
-# ToDo
 
- - [x] Fix FOIA Acces/Verify Code issue. 
-
- - [ ] I will be adding the creatino of an account and the use of VistAJS to this VistA system look for work in the src directory. I am using some work from [VistA FHIR dataloader](https://github.com/WorldVistA/VistA-FHIR-Data-Loader)
-  - [ ] For some reason when you run setup.sh sometimes it does not launch IRIS correctly, running docker compse up a second time works. Need to look into this. 
 
     
