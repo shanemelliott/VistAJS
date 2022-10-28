@@ -1,15 +1,19 @@
-ROUTINE SMEINIT [Type=INT]
- ;FROM https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
-
-EN ; [Public; called by KIDS; do everything in this file]
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="IRIS" version="26" zv="IRIS for UNIX (Ubuntu Server LTS for x86-64 Containers) 2022.1 (Build 209U)" ts="2022-10-24 09:06:55">
+<Routine name="SMEINT" type="INT" languagemode="0" timestamp="66406,32618.277812523"><![CDATA[
+ ; FROM https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
+ ; written by: Sam Habiel
+ ; SEe above repro for licnse information
+ 
+EN ; 
  D MES^XPDUTL("")
  D MES^XPDUTL("Codespace VistA ex Init")
  D MES^XPDUTL("Provider "_$$PROV(1))
  Q
 
-PROV(rePopulate) ;[Public $$] Create Generic User (provider
+PROV(rePopulate) ;[Public $$] Create Generic User (provider)
  ; ASSUMPTION: DUZ MUST HAVE XUMGR OTHERWISE FILEMAN WILL BLOCK YOU!
- N NAME S NAME="PROVIDER,vISTAJS" ; Constant
+ N NAME S NAME="PROVIDER,VISTAJS" ; Constant
  n C0XIEN s C0XIEN=$O(^VA(200,"B",NAME,0))
  if C0XIEN,'$get(rePopulate) quit C0XIEN
  if C0XIEN,$get(rePopulate) do
@@ -49,6 +53,7 @@ PROV(rePopulate) ;[Public $$] Create Generic User (provider
  ;
  ; Secondary Menu (CPRS, etc)
  S C0XFDA(200.03,"?+5,?+1,",.01)="`"_$$FIND1^DIC(19,,"QX","OR CPRS GUI CHART","B")
+ S C0XFDA(200.03,"?+7,?+1,",.01)="`"_$$FIND1^DIC(19,,"QX","SDECRPC","B")
  ;
  ; Restrict Patient Selection
  S C0XFDA(200,"?+1,",101.01)="NO"
@@ -72,7 +77,7 @@ PROV(rePopulate) ;[Public $$] Create Generic User (provider
  S FDA(200,C0XIEN(1)_",",11.2)=$$FMTH^XLFDT($$FMADD^XLFDT(DT,3000))
  ;
  ; Signature block. Do this as internal values to prevent name check in 20.2.
- S FDA(200,C0XIEN(1)_",",20.2)="SYNTHETIC PROVIDER, MD"
+ S FDA(200,C0XIEN(1)_",",20.2)="VISTA PROVIDER, MD"
  S FDA(200,C0XIEN(1)_",",20.3)="Staff Physician"
  ;
  D FILE^DIE(,$NA(FDA))
@@ -93,3 +98,5 @@ MEDSS() ; [Public $$] Create Medical Service/Section
  I $D(DIERR) S $EC=",U1,"
  QUIT IEN(1)
  
+]]></Routine>
+</Export>
