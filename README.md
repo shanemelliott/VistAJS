@@ -32,7 +32,8 @@ This repository has an implementation that will run the FOIA version of VistA fo
 
   # Logging into VistA
 
-    After the setup script has run, source your .bashhrc to add the follwoing aliases or start a new shell.
+  After the setup script has run, source your .bashhrc to add the follwoing aliases or start a new shell.
+
 
   - You can log into VistA with the following from the shell prompt.
 
