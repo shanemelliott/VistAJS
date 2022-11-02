@@ -58,6 +58,10 @@ PROV(rePopulate) ;[Public $$] Create Generic User (provider)
  ; Restrict Patient Selection
  S C0XFDA(200,"?+1,",101.01)="NO"
  ;
+ ; Multiple Sign-ons
+ S C0XFDA(200,"?+1,",200.04)="1"
+ S C0XFDA(200,"?+1,",200.19)="100"
+ ;
  ; CPRS Tabs
  S C0XFDA(200.010113,"?+6,?+1,",.01)="COR"
  S C0XFDA(200.010113,"?+6,?+1,",.02)="T-1"
