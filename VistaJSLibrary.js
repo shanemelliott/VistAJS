@@ -403,6 +403,7 @@ function buildLiteralParamString(valueString) {
     return util.format('%s%sf', '0', strPack(valueString, COUNT_WIDTH));
 }
 
+
 function buildEncryptedParamString(valueString, assocIndex, idIndex) {
     if (assocIndex < 0 || assocIndex >= CIPHER_PAD.length ||
         idIndex < 0 || idIndex >= CIPHER_PAD.length) {
@@ -428,8 +429,36 @@ function buildEncryptedParamString(valueString, assocIndex, idIndex) {
 
 
     var encryptedString = String.fromCharCode(assocIndex + 32) + encryptedValue + String.fromCharCode(idIndex + 32);
-
+   
     return buildLiteralParamString(encryptedString);
+}
+function buildEncryptedSigString(valueString, assocIndex, idIndex) {
+    if (assocIndex < 0 || assocIndex >= CIPHER_PAD.length ||
+        idIndex < 0 || idIndex >= CIPHER_PAD.length) {
+        throw new Error(util.format('Encryption Indexes must be from 0 to %s inclusive', (CIPHER_PAD.length - 1)));
+    }
+
+    if (assocIndex === null || assocIndex === undefined || idIndex === null || idIndex === undefined) {
+        assocIndex = _.random(0, 9);
+        idIndex = _.random(0, 9);
+
+        while (assocIndex === idIndex) {
+            idIndex = _.random(0, 9);
+        }
+    }
+
+    var assocStr = CIPHER_PAD[assocIndex];
+    var idStr = CIPHER_PAD[idIndex];
+
+    var encryptedValue = Array.prototype.reduce.call(valueString, function(first, second) {
+        var pos = assocStr.indexOf(second);
+        return first + (pos === -1 ? second : idStr.charAt(pos));
+    }, '');
+
+
+    var encryptedString = String.fromCharCode(assocIndex + 32) + encryptedValue + String.fromCharCode(idIndex + 32);
+   
+    return encryptedString;
 }
 
 function buildReferenceParamString(valueString) {
@@ -499,6 +528,7 @@ module.exports.isNumeric = isNumeric;
 module.exports.extractSecurityErrorMessage = extractSecurityErrorMessage;
 module.exports.buildLiteralParamString = buildLiteralParamString;
 module.exports.buildEncryptedParamString = buildEncryptedParamString;
+module.exports.buildEncryptedSigString = buildEncryptedSigString;
 module.exports.buildReferenceParamString = buildReferenceParamString;
 module.exports.buildListParamString = buildListParamString;
 module.exports.buildRpcGreetingString = buildRpcGreetingString;
