@@ -18,7 +18,9 @@ This repository has an implementation that will run the FOIA version of VistA fo
   
   - Unfortunatly the VA has made the FOIA Version of VistA too large for the community version of Intersystems IRIS. I have compacted the latest version and this repo uses that by default (2022_09_07).  But you can use any version of VistA you would like or uncomment the FOIA version if you have a licnesed version of iris. 
   
-   - ** Update - I have been talking to the VA staff that releases FOIA version about defragging / compacting / truncating it before posting.  
+   - ** Update - I have been talking to the VA staff that releases FOIA version about defragging / compacting / truncating it before posting. 
+
+   - **Update - THe latest version of FOIA VistA is now < 10gig.  
    
   - To RESET VistA back to the begiining run the reset.sh script. <-- This deletes everything!
 
