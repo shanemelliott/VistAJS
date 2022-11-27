@@ -1,5 +1,5 @@
-#ARG IMAGE=containers.intersystems.com/intersystems/irishealth:2020.1.3.521.0
-ARG IMAGE=containers.intersystems.com/intersystems/iris-community:2022.1.0.209.0
+ARG IMAGE=containers.intersystems.com/intersystems/irishealth:2020.1.3.521.0
+#ARG IMAGE=containers.intersystems.com/intersystems/iris-community:2022.1.0.209.0
 FROM $IMAGE
 
 USER root

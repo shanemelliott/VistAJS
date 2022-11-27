@@ -7,11 +7,11 @@ FILE=~/vista/dat/vista/IRIS.DAT
 # Internal newer version (needs to be renamed - see below): iris.zip
 # s3 URL: iris-1-3-13.s3.us-west-2.amazonaws.com
 # FOI URL: foia-vista.worldvista.org/DBA_VistA_FOIA_System_Files/DBA_VISTA_FOIA_2022/
-# URL=iris-1-3-13.s3.us-west-2.amazonaws.com
-URL=foia-vista.worldvista.org/DBA_VistA_FOIA_System_Files/DBA_VISTA_FOIA_2022/
+URL=iris-1-3-13.s3.us-west-2.amazonaws.com
+#URL=foia-vista.worldvista.org/DBA_VistA_FOIA_System_Files/DBA_VISTA_FOIA_2022/
 #ZIP=DBA_VISTA_FOIA_COMP_20220907.zip
-ZIP=DBA_VISTA_FOIA_20221004.zip
-# ZIP=iris.zip
+#ZIP=DBA_VISTA_FOIA_20221004.zip
+ZIP=iris.zip
 # ZIP=iris-dat.zip
 
 is_healthy() {
@@ -34,6 +34,7 @@ else
     mkdir ~/vista/
     mkdir ~/vista/merge/
     cp merge.cpf ~/vista/merge/merge.cpf
+    cp iris.key ~/vista/
     mkdir ~/vista/dat
     mkdir ~/vista/dat/vista
     sudo chown -R 51773:51773 ~/vista
@@ -42,10 +43,10 @@ else
     sudo unzip ~/vista/dat/vista/$ZIP -d ~/vista/dat/vista
     sudo rm ~/vista/dat/vista/$ZIP
     # for another version of VistA
-    #sudo mv ~/vista/dat/vista/IRIS.old ~/vista/dat/vista/IRIS.DAT
+    sudo mv ~/vista/dat/vista/IRIS.old ~/vista/dat/vista/IRIS.DAT
     sudo chmod 775 ~/vista/dat/vista/IRIS.DAT
     sudo chown 51773:51773 ~/vista/dat/vista/IRIS.DAT
-    cp ./bashrc ~/.bashrc
+    cp /workspaces/VistAJS/vista/bashrc ~/.bashrc
     docker-compose up -d --build
     echo "waiting for iris to start..... this may take a minute.."
     echo "source your .bashrc file to add aliases"

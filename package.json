@@ -24,6 +24,7 @@
     "moment": "^2.29.4",
     "net": "^1.0.2",
     "node-cache": "^5.1.2",
+    "simple-hl7": "^3.2.4",
     "underscore": "^1.13.6",
     "underscore.string": "^3.3.6",
     "util": "^0.12.4"
