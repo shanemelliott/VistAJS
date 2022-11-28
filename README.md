@@ -69,7 +69,7 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
  # Licensed Version
 
  - Create Intersystems Account, Get docker registry login token (https://login.intersystems.com/login/SSO.UI.Register.cls?referrer=https%3A//community.intersystems.com/post/subquery-remote-view-odbc-gateway)
- - Login to docker registry (https://docs.intersystems.com/components/csp/docbook/DocBook.UI.Page.cls?KEY=PAGE_containerregistry)
+ - Login to docker licensed registry (https://docs.intersystems.com/components/csp/docbook/DocBook.UI.Page.cls?KEY=PAGE_containerregistry)
  - Run setup
  - copy Iris.key to ~/vista/iris_conf/mgr/
  - restart iris (iris stop|start iris)
