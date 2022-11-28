@@ -78,7 +78,7 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
  - edit vps link add ip address in domain
  - start hl7 listener node hl7.js
  - HLO TO MONITOR
- - MAKE APPT
+ - MAKE APPT (D ^XUP, ^SDAM)
 
  
 MSH|^~\&|VPS SEND APPT STATUS|530^STAGING.VISTA-API.VA.GOV:5026^DNS|VPS vA APPT STATUS|^172.18.0.1:6020^DNS|20221128092310-0500||ADT^A01^ADT_A01|530 4192|T^|2.4|||AL|NE|
