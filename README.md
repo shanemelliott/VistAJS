@@ -66,6 +66,30 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
 
  - On the Docker container (iris) /tmp/xusrb1fix.sh.  Update: I have included this in the setup.sh script so there is no need to run this independently. 
 
+ # Licensed Version
+
+ - Create Intersystems Account, Get docker registry login token
+ - Login to docker registry
+ - Run setup
+ - copy Iris.key to ~/vista/iris_conf/mgr/
+ - restart iris (iris stop|start iris)
+ - restart teskman
+ - edit VPS HL7 SITE PARAMETER and enable
+ - edit vps link add ip address in domain
+ - HLO TO MONITO
+ - MAKE APPT
+
+ 
+MSH|^~\&|VPS SEND APPT STATUS|530^STAGING.VISTA-API.VA.GOV:5026^DNS|VPS vA APPT STATUS|^172.18.0.1:6020^DNS|20221128092310-0500||ADT^A01^ADT_A01|530 4192|T^|2.4|||AL|NE|
+EVN||3221129.15|202211291500-0500|11|FUTURE^524^SLEEP LAB^9^REGULAR
+PID|1|366^530^^USVHA||0;NON-SENSITIVE|TWENTYEIGHT^PATIENT^||||||||||||||666000028
+PV1|1|U
+IN1|1|N
+ZEL|1
+ZEN|1|||||||||3221006.1011|^202210061011-0500
+ZMT|1
+******sending ack*****
+
 
 
 
