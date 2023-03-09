@@ -10,13 +10,13 @@ node index.js
 
 - Please remember you need a valid user with a valid Access / Verify Code.  Depending on the version of VistA you are using that will vary. 
 
-# Codespace verision of VistA. 
+# Codespace version of VistA. 
 
 This repository has an implementation that will run the FOIA version of VistA for testing VistAJS. See the /vista directory in the repo. 
 
   - Run setup.sh to download the FOIA version of VistA and start community version of Intersytems IRIS. *Update: This script will create a generic Provider user and then run VistJS to verify successful install. The routine I used to do this is from https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
   
-  - Unfortunatly the VA has made the FOIA Version of VistA too large for the community version of Intersystems IRIS. I have compacted the latest version and this repo uses that by default (2022_09_07).  But you can use any version of VistA you would like or uncomment the FOIA version if you have a licnesed version of iris. 
+  - Unfortunately the VA has made the FOIA Version of VistA too large for the community version of Intersystems IRIS. I have compacted the latest version and this repo uses that by default (2022_09_07).  But you can use any version of VistA you would like or uncomment the FOIA version if you have a licnesed version of iris. 
   
    - ** Update - I have been talking to the VA staff that releases FOIA version about defragging / compacting / truncating it before posting. 
 
