@@ -338,7 +338,46 @@ function callRpcSSO(logger, configuration, rpc, parameters, callback) {
 }
 }
 
+function callRpcBSE(logger, configuration, rpc, parameters, callback) {
+    logger = logger || defaultLogger;
 
+    if (!configuration) {
+        throw new Error('No configuration parameter was passed to callRpcBSE()');
+    }
+
+    const requiredKeys = ['host', 'port', 'applicationCode', 'samlToken'];
+    const missingKeys = _.difference(requiredKeys, _.keys(configuration));
+    if (missingKeys.length > 0) {
+        throw new Error('The configuration parameter was missing the following keys: ' + missingKeys.join(', '));
+    }
+
+    if (!rpc) {
+        throw new Error('No rpc parameter was passed to callRpcBSE()');
+    }
+
+    if (!(callback instanceof Function)) {
+        throw new Error('No callback function was passed to callRpcBSE()');
+    }
+
+    const commandList = [];
+    commandList.push(VistaJSLibrary.buildGreetingCommand(logger,configuration)); 
+    commandList.push(VistaJSLibrary.buildSignOnSetupCommand(logger)); // XUS SIGNON SETUP
+    commandList.push(VistaJSLibrary.buildValidateSamlTokenCommand(logger, configuration)); // XUS ESSO VALIDATE
+    commandList.push(VistaJSLibrary.buildSetVisitorCommand(logger, configuration)); // XUS SET VISITOR
+    commandList.push(VistaJSLibrary.buildSignOnWithBseTokenCommand(logger, configuration)); // XUS SIGNON SETUP with BSE token
+    commandList.push(VistaJSLibrary.buildCreateContextCommand(logger, configuration)); // XWB CREATE CONTEXT
+    commandList.push(buildCommand(logger, rpc, processParamList(parameters))); // Actual RPC call
+    commandList.push(VistaJSLibrary.buildSignOffCommand(logger)); // Sign off
+
+    const client = new VistaJSLibrary.RpcClient(logger, configuration, commandList, function (error, result) {
+        if (error) {
+            return callback(error);
+        }
+        callback(null, result);
+    });
+
+    client.start();
+}
 
 function processParamList(paramList) {
     if (paramList === null || paramList === undefined) {
@@ -409,3 +448,4 @@ module.exports.callRpc = callRpc;
 module.exports.authenticate = authenticate;
 module.exports.authenticateSSO = authenticateSSO;
 module.exports.callRpcSSO = callRpcSSO;
+module.exports.callRpcBSE = callRpcBSE;

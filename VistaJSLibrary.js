@@ -346,6 +346,61 @@ function buildConnectionCommandListForSSO(logger, configuration) {
     return commandList;
 }
 
+function buildValidateSamlTokenCommand(logger, configuration) {
+    logger.debug('RpcClient.buildValidateSamlTokenCommand()');
+
+    const param = buildEncryptedParamString(configuration.samlToken);
+
+    return {
+        rpc: buildRpcString('XUS ESSO VALIDATE', [param]),
+        process: function (data) {
+            logger.debug('RpcClient.validateSamlTokenCommand.process()');
+            if (data.length === 0) {
+                throw new Error('No response to SAML token validation');
+            }
+            return data; // Assuming the response is valid
+        }
+    };
+}
+
+function buildSetVisitorCommand(logger, configuration) {
+    logger.debug('RpcClient.buildSetVisitorCommand()');
+
+    return {
+        rpc: buildRpcString('XUS SET VISITOR', null),
+        process: function (data) {
+            logger.debug('RpcClient.setVisitorCommand.process()');
+            if (data.length === 0) {
+                throw new Error('No response to set visitor request');
+            }
+
+            const parts = data.split('\r\n');
+            if (parts[0] === '0') {
+                throw new Error(parts[3]);
+            }
+
+            configuration.bseToken = parts[0]; // Save the BSE token in the configuration
+            return configuration.bseToken;
+        }
+    };
+}
+
+function buildSignOnWithBseTokenCommand(logger, configuration) {
+    logger.debug('RpcClient.buildSignOnWithBseTokenCommand()');
+
+    const param = buildEncryptedParamString(configuration.applicationCode + '^' + configuration.bseToken);
+
+    return {
+        rpc: buildRpcString('XUS SIGNON SETUP', [param]),
+        process: function (data) {
+            logger.debug('RpcClient.signOnWithBseTokenCommand.process()');
+            if (data.length === 0) {
+                throw new Error('No response to BSE token sign-on');
+            }
+            return 'SIGNON WITH BSE TOKEN SUCCESSFUL';
+        }
+    };
+}
 
 function strPack(string, width) {
     return _str.lpad(string.length, width, '0') + string;
@@ -545,3 +600,6 @@ module.exports.buildSignOffCommand = buildSignOffCommand;
 module.exports.buildConnectionCommandList = buildConnectionCommandList;
 module.exports.buildVerifyLoginTokenCommand = buildVerifyLoginTokenCommand;
 module.exports.buildConnectionCommandListForSSO = buildConnectionCommandListForSSO;
+module.exports.buildValidateSamlTokenCommand = buildValidateSamlTokenCommand;
+module.exports.buildSetVisitorCommand = buildSetVisitorCommand;
+module.exports.buildSignOnWithBseTokenCommand = buildSignOnWithBseTokenCommand;
