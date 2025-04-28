@@ -347,6 +347,7 @@ function callRpcBSE(logger, configuration, rpc, parameters, callback) {
 
     const requiredKeys = ['host', 'port', 'applicationCode', 'samlToken'];
     const missingKeys = _.difference(requiredKeys, _.keys(configuration));
+   
     if (missingKeys.length > 0) {
         throw new Error('The configuration parameter was missing the following keys: ' + missingKeys.join(', '));
     }
