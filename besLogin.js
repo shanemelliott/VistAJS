@@ -5,12 +5,11 @@
 var util = require('util');
 var _ = require('underscore');
 var clc = require('cli-color');
-var moment = require('moment');
 var VistaJS = require('./VistaJS');
 const configuration = require('./config');
 var logger = require('bunyan').createLogger({
     name: 'RpcClient',
-    level: 'debug'
+    level: 'info'
 });
 
 function inspect(obj) {
@@ -35,23 +34,6 @@ function printJsonResult(error, result) {
     console.log(clc.cyan(inspect(output)));
 }
 console.log('Executing RPC...')
-VistaJS.callRpcBSE(logger, configuration, 'SDES GET USER PROFILE BY DUZ', [VistaJS.RpcParameter.literal('1')],printJsonResult);
-/*
-function splitTokenIntoChunks(token) {
-    const mult = {}; // This is like Param[0].Mult
-    const chunkSize = 200;
-    let i = 0;
-    for (let iStart = 0; iStart < token.length; iStart += chunkSize) {
-      const chunk = token.substr(iStart, chunkSize); // get 200 characters
-      mult[i.toString()] = chunk; // store it under key '0', '1', '2', etc.
-      i++;
-    }
-    return mult;
-}
-const mult = splitTokenIntoChunks(configuration.samlToken);
-//console.log('mult', mult);
-configuration.context = 'CDSP RPC UTILSS';
-//XOBV TEST GLOBAL ARRAY
-VistaJS.callRpc(logger, configuration, 'XUS ESSO VALIDATE', [mult],printJsonResult);
-VistaJS.callRpc(logger, configuration, 'XOBV TEST GLOBAL ARRAY', [param],printJsonResult);
-*/
+configuration.context = 'CDSP RPC CONTEXT';
+VistaJS.callRpcBSE(logger, configuration, 'ORWPT SELECT', [VistaJS.RpcParameter.literal('237')],printJsonResult);
+

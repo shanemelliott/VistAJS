@@ -346,6 +346,22 @@ function buildConnectionCommandListForSSO(logger, configuration) {
 
     return commandList;
 }
+
+
+function buildConnectionCommandListForBSE(logger, configuration) {
+    var commandList = [];
+    commandList.push(buildGreetingCommand(logger,configuration)); 
+        commandList.push(buildSignOnSetupCommand(logger)); // XUS SIGNON SETUP
+        commandList.push(buildValidateSamlTokenCommand(logger, configuration)); // XUS ESSO VALIDATE
+        commandList.push(buildCreateContextCommand(logger, configuration)); // XWB CREATE CONTEXT
+       
+    return commandList;
+}
+
+//used to split Global into chunks of 200 characters
+// This is used to split the SAML token into chunks of 200 characters   
+// This is because the RPC call to VistA has a limit of 200 characters per parameter
+// This also makes use of the global type
 function splitTokenIntoChunks(token) {
     const mult = {}; // This is like Param[0].Mult
     const chunkSize = 200;
@@ -361,7 +377,6 @@ function splitTokenIntoChunks(token) {
 function buildValidateSamlTokenCommand(logger, configuration) {
     logger.debug('RpcClient.buildValidateSamlTokenCommand()');
     const mult = splitTokenIntoChunks(configuration.samlToken)
-    //const param = buildEncryptedParamString(configuration.samlToken);
     const param = buildGlobalParamString(
         Object.entries(mult).map(([key,value])=>({key,value}))
     )
@@ -370,55 +385,15 @@ function buildValidateSamlTokenCommand(logger, configuration) {
         rpc: buildRpcString('XUS ESSO VALIDATE', [param]),
         process: function (data) {
             logger.debug('RpcClient.validateSamlTokenCommand.process()');
-            console.log('data', data);
-            logger.debug(data);
             if (data.length === 0) {
                 throw new Error('No response to SAML token validation');
             }
-          
-            return data; // Assuming the response is valid
+            return data; 
         }
     };
 }
 
-function buildSetVisitorCommand(logger, configuration) {
-    logger.debug('RpcClient.buildSetVisitorCommand()');
 
-    return {
-        rpc: buildRpcString('XUS SET VISITOR', null),
-        process: function (data) {
-            logger.debug('RpcClient.setVisitorCommand.process()');
-            if (data.length === 0) {
-                throw new Error('No response to set visitor request');
-            }
-
-            const parts = data.split('\r\n');
-            if (parts[0] === '0') {
-                throw new Error(parts[3]);
-            }
-
-            configuration.bseToken = parts[0]; // Save the BSE token in the configuration
-            return configuration.bseToken;
-        }
-    };
-}
-
-function buildSignOnWithBseTokenCommand(logger, configuration) {
-    logger.debug('RpcClient.buildSignOnWithBseTokenCommand()');
-
-    const param = buildEncryptedParamString(configuration.applicationCode + '^' + configuration.bseToken);
-
-    return {
-        rpc: buildRpcString('XUS SIGNON SETUP', [param]),
-        process: function (data) {
-            logger.debug('RpcClient.signOnWithBseTokenCommand.process()');
-            if (data.length === 0) {
-                throw new Error('No response to BSE token sign-on');
-            }
-            return 'SIGNON WITH BSE TOKEN SUCCESSFUL';
-        }
-    };
-}
 
 function strPack(string, width) {
     return _str.lpad(string.length, width, '0') + string;
@@ -640,5 +615,4 @@ module.exports.buildConnectionCommandList = buildConnectionCommandList;
 module.exports.buildVerifyLoginTokenCommand = buildVerifyLoginTokenCommand;
 module.exports.buildConnectionCommandListForSSO = buildConnectionCommandListForSSO;
 module.exports.buildValidateSamlTokenCommand = buildValidateSamlTokenCommand;
-module.exports.buildSetVisitorCommand = buildSetVisitorCommand;
-module.exports.buildSignOnWithBseTokenCommand = buildSignOnWithBseTokenCommand;
+module.exports.buildConnectionCommandListForBSE = buildConnectionCommandListForBSE;

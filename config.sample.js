@@ -5,5 +5,6 @@ module.exports = {
     accessCode: '',
     verifyCode: '',
     localIP: '',
-    localAddress: ''
+    localAddress: '',
+    samlToken:''
 };
