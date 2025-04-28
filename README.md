@@ -12,7 +12,7 @@ node index.js
 
 # Codespace version of VistA. 
 
-This repository has an implementation that will run the FOIA version of VistA for testing VistAJS. See the /vista directory in the repo.  [Update] the codespace version in the repo lon longer works as of 2025.  codespaces changed the way they handle docker containers.  I am working on a new version of this repo that will work with the latest version of codespaces conming soon.
+This repository has an implementation that will run the FOIA version of VistA for testing VistAJS. See the /vista directory in the repo. 
 
   - Run setup.sh to download the FOIA version of VistA and start community version of Intersytems IRIS. *Update: This script will create a generic Provider user and then run VistJS to verify successful install. The routine I used to do this is from https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
   
@@ -20,7 +20,9 @@ This repository has an implementation that will run the FOIA version of VistA fo
   
    - ** Update - I have been talking to the VA staff that releases FOIA version about defragging / compacting / truncating it before posting. 
 
-   - **Update - THe latest version of FOIA VistA is now < 10gig.  
+   - ** Update - THe latest version of FOIA VistA is now < 10gig.  
+
+   -  ** Update - The codespace version in the repo no longer works as of 2025.  codespaces changed the way they handle docker containers.  I am working on a new version of this repo that will work with the latest version of codespaces conming soon.
    
   - To RESET VistA back to the begiining run the reset.sh script. <-- This deletes everything!
 
