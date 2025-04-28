@@ -94,7 +94,8 @@ function buildCommand(logger, rpcName, parameterStringList) {
 
 function callRpc(logger, configuration, rpc, parameters, callback) {
     logger = logger || defaultLogger;
-
+    //Why use arguments? why not just use the parameters? 
+    //To do: fix this. 
     if (!configuration) {
         throw new Error('no configuration parameter was passed to callRpc()');
     }
@@ -338,7 +339,81 @@ function callRpcSSO(logger, configuration, rpc, parameters, callback) {
 }
 }
 
+function callRpcBSE(logger, configuration, rpc, parameters, callback) {
+    logger = logger || defaultLogger;
 
+    if (!configuration) {
+        throw new Error('no configuration parameter was passed to callRpc()');
+    }
+
+   var diff = _.difference(configRequiredKeys, _.keys(configuration));
+   if (diff.length > 0) {
+       throw new Error('the configuration parameter was missing the following keys: ' + diff);
+   }
+
+    if (!rpc) {
+        throw new Error('no rpc parameter was passed to callRpc()');
+    }
+
+    if (arguments.length < 4) {
+        throw new Error('Invalid number of arguments passed to callRpc()');
+    }
+
+    if (!(arguments[arguments.length - 1] instanceof Function)) {
+        throw new Error('No callback function was passed to callRpc()');
+    }
+
+    callback = arguments[arguments.length - 1];
+
+    var params = [];
+    if (arguments.length > 4) {
+        var args = _.toArray(arguments);
+        params = _.map(args.slice(3, args.length - 1), function(param) {
+            return param;
+        });
+    }
+
+    params = _.flatten(params);
+    params = _.filter(params, function(param) {
+        return param !== null && param !== undefined;
+    });
+
+    var rpcParamList = processParamList(params);
+
+    var key = createKey(logger, configuration, rpc, rpcParamList);
+
+    logger.debug('RpcClient call rpc: "%s" ', rpc );
+
+    var commandList = VistaJSLibrary.buildConnectionCommandListForBSE(logger, configuration);
+    commandList.push(buildCommand(logger, rpc, _.map(rpcParamList, function(param) {
+        return param.value;
+    })));
+
+    commandList.push(VistaJSLibrary.buildSignOffCommand(logger));
+
+    var cachedResult = fetch(logger, key);
+    if (cachedResult) {
+        logger.debug('callRpc("%s") via cache', rpc);
+        return callback(null, cachedResult);
+    } else {
+    var client = new VistaJSLibrary.RpcClient(logger, configuration, commandList, function(error, result) {
+        logger.debug('callRpc("%s") via Vista-RPC', rpc);
+        if (error) {
+            return callback(error);
+        }
+
+        if (result.length && result.length > 4) {
+            var rpcResult = result;// added all the result[4];
+            save(logger, key, rpcResult);
+            return callback(null, rpcResult);
+        }
+
+        callback(new Error('results were incomplete or undefined'));
+    });
+
+    client.start();
+}
+}
 
 function processParamList(paramList) {
     if (paramList === null || paramList === undefined) {
@@ -409,3 +484,6 @@ module.exports.callRpc = callRpc;
 module.exports.authenticate = authenticate;
 module.exports.authenticateSSO = authenticateSSO;
 module.exports.callRpcSSO = callRpcSSO;
+module.exports.callRpcBSE = callRpcBSE;
+
+

@@ -9,7 +9,7 @@ var VistaJS = require('./VistaJS');
 const configuration = require('./config');
 var logger = require('bunyan').createLogger({
     name: 'RpcClient',
-    level: 'debug'
+    level: 'info'
 });
 
 function inspect(obj) {
@@ -34,4 +34,6 @@ function printJsonResult(error, result) {
     console.log(clc.cyan(inspect(output)));
 }
 console.log('Executing RPC...')
-VistaJS.callRpc(logger, configuration, 'SDES GET USER PROFILE BY DUZ', ['520824653'],printJsonResult);
+configuration.context = 'CDSP RPC CONTEXT';
+VistaJS.callRpcBSE(logger, configuration, 'ORWPT SELECT', [VistaJS.RpcParameter.literal('237')],printJsonResult);
+

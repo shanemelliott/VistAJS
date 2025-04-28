@@ -7,10 +7,11 @@ var util = require('util');
 var async = require('async');
 var _ = require('underscore');
 var _str = require('underscore.string');
+const object = require('underscore/cjs/object.js');
 
 
 var PREFIX = '[XWB]';
-var RPC_VERSION = '1.108';
+var RPC_VERSION = '1.108';//2.0??
 var COUNT_WIDTH = 3;
 var NUL = '\u0000';
 var SOH = '\u0001';
@@ -347,6 +348,53 @@ function buildConnectionCommandListForSSO(logger, configuration) {
 }
 
 
+function buildConnectionCommandListForBSE(logger, configuration) {
+    var commandList = [];
+    commandList.push(buildGreetingCommand(logger,configuration)); 
+        commandList.push(buildSignOnSetupCommand(logger)); // XUS SIGNON SETUP
+        commandList.push(buildValidateSamlTokenCommand(logger, configuration)); // XUS ESSO VALIDATE
+        commandList.push(buildCreateContextCommand(logger, configuration)); // XWB CREATE CONTEXT
+       
+    return commandList;
+}
+
+//used to split Global into chunks of 200 characters
+// This is used to split the SAML token into chunks of 200 characters   
+// This is because the RPC call to VistA has a limit of 200 characters per parameter
+// This also makes use of the global type
+function splitTokenIntoChunks(token) {
+    const mult = {}; // This is like Param[0].Mult
+    const chunkSize = 200;
+    let i = 0;
+    for (let iStart = 0; iStart < token.length; iStart += chunkSize) {
+      const chunk = token.substr(iStart, chunkSize); // get 200 characters
+      mult[i.toString()] = chunk; // store it under key '0', '1', '2', etc.
+      i++;
+    }
+    return mult;
+}
+
+function buildValidateSamlTokenCommand(logger, configuration) {
+    logger.debug('RpcClient.buildValidateSamlTokenCommand()');
+    const mult = splitTokenIntoChunks(configuration.samlToken)
+    const param = buildGlobalParamString(
+        Object.entries(mult).map(([key,value])=>({key,value}))
+    )
+
+    return {
+        rpc: buildRpcString('XUS ESSO VALIDATE', [param]),
+        process: function (data) {
+            logger.debug('RpcClient.validateSamlTokenCommand.process()');
+            if (data.length === 0) {
+                throw new Error('No response to SAML token validation');
+            }
+            return data; 
+        }
+    };
+}
+
+
+
 function strPack(string, width) {
     return _str.lpad(string.length, width, '0') + string;
 }
@@ -487,6 +535,27 @@ function buildListParamString(valueList) {
     return util.format('%s%sf', '2', paramString.substring(0, paramString.length - 1));
 }
 
+function buildGlobalParamString(valueList) {
+    // each list item should be: { key: '', value: '' }
+    if (valueList === null || valueList === undefined || valueList.length === 0) {
+        return strPack('', COUNT_WIDTH) + 'f';
+    }
+
+    var paramString = valueList.reduce(function(first, second) {
+        var paramName = second.key;
+        var paramValue = second.value;
+
+        if (paramValue === null || paramValue === undefined || paramValue.length === 0) {
+            paramValue = SOH;
+        }
+
+        return first + util.format('%s%st',
+            strPack(paramName, COUNT_WIDTH),
+            strPack(paramValue, COUNT_WIDTH));
+    }, '');
+
+    return util.format('%s%sf', '3', paramString.substring(0, paramString.length - 1));
+}
 
 function buildRpcGreetingString(ipAddress, hostname) {
     return util.format('[XWB]10304\nTCPConnect50%sf0%sf0%sf%s',
@@ -545,3 +614,5 @@ module.exports.buildSignOffCommand = buildSignOffCommand;
 module.exports.buildConnectionCommandList = buildConnectionCommandList;
 module.exports.buildVerifyLoginTokenCommand = buildVerifyLoginTokenCommand;
 module.exports.buildConnectionCommandListForSSO = buildConnectionCommandListForSSO;
+module.exports.buildValidateSamlTokenCommand = buildValidateSamlTokenCommand;
+module.exports.buildConnectionCommandListForBSE = buildConnectionCommandListForBSE;

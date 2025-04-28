@@ -5,6 +5,7 @@
 var util = require('util');
 var _ = require('underscore');
 var clc = require('cli-color');
+var moment = require('moment');
 var VistaJS = require('./VistaJS');
 const configuration = require('./config');
 var logger = require('bunyan').createLogger({
@@ -34,4 +35,4 @@ function printJsonResult(error, result) {
     console.log(clc.cyan(inspect(output)));
 }
 console.log('Executing RPC...')
-VistaJS.callRpc(logger, configuration, 'SDES GET USER PROFILE BY DUZ', ['520824653'],printJsonResult);
+VistaJS.callRpc(logger, configuration, 'ORWPT PTINQ', [VistaJS.RpcParameter.literal('237')],printJsonResult);

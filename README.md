@@ -12,7 +12,7 @@ node index.js
 
 # Codespace version of VistA. 
 
-This repository has an implementation that will run the FOIA version of VistA for testing VistAJS. See the /vista directory in the repo. 
+This repository has an implementation that will run the FOIA version of VistA for testing VistAJS. See the /vista directory in the repo.  [Update] the codespace version in the repo lon longer works as of 2025.  codespaces changed the way they handle docker containers.  I am working on a new version of this repo that will work with the latest version of codespaces conming soon.
 
   - Run setup.sh to download the FOIA version of VistA and start community version of Intersytems IRIS. *Update: This script will create a generic Provider user and then run VistJS to verify successful install. The routine I used to do this is from https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
   
@@ -66,6 +66,9 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
 
  - On the Docker container (iris) /tmp/xusrb1fix.sh.  Update: I have included this in the setup.sh script so there is no need to run this independently. 
 
+
+# BSE Tokin Authentication to VistA 
+ - BSE token authentication support has been added to the VistAJS library, also called the "visitor pattern".  This dempnstrates how to use a VA issued service account to authenticate to VistA and execute RPC calls. look at [bseLogin.js](/bseLogin.js) for more information.  The VistaJSLibray has also been updated to support the 'global' RPC parameter type. 
 
 
 
