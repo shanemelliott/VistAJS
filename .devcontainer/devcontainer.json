@@ -15,6 +15,12 @@
     "source=/etc/timezone,target=/etc/timezone,type=bind,readonly=true"
   ],
   
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+  
   "forwardPorts": [52773, 1972, 9093, 9096],
   "portsAttributes": {
     "52773": {"label": "IRIS Management", "onAutoForward": "notify"},
