@@ -54,10 +54,15 @@ This repository has an implementation that will run the FOIA version of VistA fo
       ``
         prog
       ``
+  - You can log into the VISTA namespace directly with the following from the shell prompt.
+
+      ``
+        vista
+      ``
   - you can get an interactive shell as the IRIS owner by typing the following from the shell prompt.
 
       ``
-        iris
+        irisowner
       ``
 
 # Xinetd
