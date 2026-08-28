@@ -10,20 +10,17 @@ RUN apt-get update \
 # Copy VistA configuration and initialization files
 COPY vista/stg_rpc /etc/xinetd.d/stg_rpc
 COPY vista/stg_vlk /etc/xinetd.d/stg_vlk
-COPY vista/smeint.xml /tmp/smeint.xml
-COPY vista/xusrb1.xml /tmp/xusrb1.xml
+COPY vista/smeint.xml /opt/vistajs/smeint.xml
+COPY vista/xusrb1.xml /opt/vistajs/xusrb1.xml
 COPY vista/xinetd.sh /xinetd.sh
-COPY vista/xusrb1fix.script /tmp/xusrb1fix.script
-COPY vista/CreateUser.script /tmp/CreateUser.script
+COPY vista/xusrb1fix.script /opt/vistajs/xusrb1fix.script
+COPY vista/CreateUser.script /opt/vistajs/CreateUser.script
 COPY .devcontainer/entrypoint.sh /entrypoint.sh
 
 # Normalize line endings (source files may have CRLF from Windows git checkouts,
 # which breaks shell shebangs with "cannot execute: required file not found")
-RUN sed -i 's/\r$//' /xinetd.sh /entrypoint.sh /tmp/xusrb1fix.script /tmp/CreateUser.script \
+RUN sed -i 's/\r$//' /xinetd.sh /entrypoint.sh /opt/vistajs/xusrb1fix.script /opt/vistajs/CreateUser.script \
     && chmod +x /xinetd.sh /entrypoint.sh
-
-# Ensure data directories exist
-RUN mkdir -p /vistadata/iris_conf.d /vistadata/merge /vistadata/dat/vista
 
 USER ${ISC_PACKAGE_MGRUSER}
 

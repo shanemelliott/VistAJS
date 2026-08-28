@@ -1,8 +1,8 @@
  ; load the correct version of XUSRB1
  zn "VISTA"
- d $System.OBJ.Load("/tmp/xusrb1.xml")
+ d $System.OBJ.Load("/opt/vistajs/xusrb1.xml")
  ;load SMEINT to create initial user
- d $System.OBJ.Load("/tmp/smeint.xml")
+ d $System.OBJ.Load("/opt/vistajs/smeint.xml")
  ;compile XUSRB1,SMEINT
  D COMPILE^%RCOMPIL("XUSRB1","INT")
  D COMPILE^%RCOMPIL("SMEINT","INT")

@@ -68,10 +68,10 @@ fi
 MARKER="$DATA_DIR/.vistajs-initialized"
 if [ ! -f "$MARKER" ]; then
     echo "[start-iris] First run - loading XUSRB1 and SMEINT routines..."
-    su irisowner -c "iris session IRIS < /tmp/xusrb1fix.script" || echo "[start-iris] Warning: routine load had issues"
+    su irisowner -c "iris session IRIS < /opt/vistajs/xusrb1fix.script" || echo "[start-iris] Warning: routine load had issues"
 
     echo "[start-iris] Creating initial user..."
-    su irisowner -c "iris session IRIS < /tmp/CreateUser.script" || echo "[start-iris] Warning: user creation had issues"
+    su irisowner -c "iris session IRIS < /opt/vistajs/CreateUser.script" || echo "[start-iris] Warning: user creation had issues"
 
     touch "$MARKER"
 else
