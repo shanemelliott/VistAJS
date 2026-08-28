@@ -1,4 +1,4 @@
-ARG IMAGE=ccontainers.intersystems.com/intersystems/iris-community:2025.3
+ARG IMAGE=containers.intersystems.com/intersystems/iris-community:2025.3
 FROM $IMAGE
 
 USER root
