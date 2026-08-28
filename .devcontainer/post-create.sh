@@ -65,7 +65,7 @@ if [ ! -f "/workspace/config.js" ] && [ -f "/workspace/config.sample.js" ]; then
     echo "Generating config.js with default VistA test user credentials..."
     cat > /workspace/config.js << 'EOF'
 module.exports = {
-    context: '',
+    context: 'SDECRPC',
     host: 'localhost',
     port: 19301,
     accessCode: 'VISTAJS123',
