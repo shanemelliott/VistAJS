@@ -67,20 +67,37 @@ fi
 # Only run the routine load / user creation once per durable data volume
 MARKER="$DATA_DIR/.vistajs-initialized"
 if [ ! -f "$MARKER" ]; then
+    ROUTINE_LOAD_OK=1
+    USER_CREATE_OK=1
+
     echo "[start-iris] First run - loading XUSRB1 and SMEINT routines..."
-    su irisowner -c "iris session IRIS < /opt/vistajs/xusrb1fix.script" || echo "[start-iris] Warning: routine load had issues"
+    su irisowner -c "iris session IRIS < /opt/vistajs/xusrb1fix.script" || { echo "[start-iris] Warning: routine load had issues"; ROUTINE_LOAD_OK=0; }
 
     echo "[start-iris] Creating initial user..."
-    su irisowner -c "iris session IRIS < /opt/vistajs/CreateUser.script" || echo "[start-iris] Warning: user creation had issues"
+    su irisowner -c "iris session IRIS < /opt/vistajs/CreateUser.script" || { echo "[start-iris] Warning: user creation had issues"; USER_CREATE_OK=0; }
 
-    touch "$MARKER"
+    if [ "$ROUTINE_LOAD_OK" -eq 1 ] && [ "$USER_CREATE_OK" -eq 1 ]; then
+        touch "$MARKER"
+    else
+        echo "[start-iris] Not marking as initialized due to errors above - will retry on next start"
+    fi
 else
     echo "[start-iris] Already initialized - skipping routine load and user creation"
 fi
 
 echo "[start-iris] Starting xinetd..."
 if ! pgrep -x xinetd >/dev/null 2>&1; then
-    /xinetd.sh &
+    # setsid/nohup fully detach xinetd so it survives after this script exits
+    # (a plain "&" background job can be killed when postStartCommand's shell exits)
+    nohup setsid /xinetd.sh < /dev/null > /var/log/xinetd-start.log 2>&1 &
+    disown
+    sleep 1
+    if pgrep -x xinetd >/dev/null 2>&1; then
+        echo "[start-iris] xinetd started"
+    else
+        echo "[start-iris] WARNING: xinetd did not start - see /var/log/xinetd-start.log"
+        cat /var/log/xinetd-start.log 2>/dev/null
+    fi
 else
     echo "[start-iris] xinetd already running"
 fi
