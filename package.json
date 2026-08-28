@@ -20,12 +20,10 @@
     "async": "^3.2.4",
     "bunyan": "^1.8.15",
     "cli-color": "^2.0.3",
-    "install": "^0.13.0",
     "moment": "^2.29.4",
     "net": "^1.0.2",
     "node-cache": "^5.1.2",
     "underscore": "^1.13.6",
-    "underscore.string": "^3.3.6",
-    "util": "^0.12.4"
+    "underscore.string": "^3.3.6"
   }
 }
