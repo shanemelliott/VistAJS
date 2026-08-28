@@ -4,6 +4,14 @@
 # must be started explicitly here instead of relying on entrypoint.sh.
 set -e
 
+# Ensure directories and merge.cpf exist - do not depend on postCreateCommand
+# having run first, since Codespaces can run postStartCommand before it.
+mkdir -p /vistadata/merge /vistadata/dat/vista /vistadata/iris_conf.d
+if [ ! -f /vistadata/merge/merge.cpf ] && [ -f /workspace/vista/merge.cpf ]; then
+    echo "[start-iris] Generating merge.cpf..."
+    sed 's#/dur/#/vistadata/#g' /workspace/vista/merge.cpf > /vistadata/merge/merge.cpf
+fi
+
 echo "[start-iris] Fixing ownership of /vistadata for IRIS (51773:51773)..."
 chown -R 51773:51773 /vistadata
 chmod -R 775 /vistadata
