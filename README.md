@@ -10,21 +10,23 @@ node index.js
 
 - Please remember you need a valid user with a valid Access / Verify Code.  Depending on the version of VistA you are using that will vary. 
 
-# Codespace version of VistA. 
+# Codespace version of VistA.
 
-This repository has an implementation that will run the FOIA version of VistA for testing VistAJS. See the /vista directory in the repo. 
+This repository has an implementation that will run the FOIA version of VistA for testing VistAJS, using a [.devcontainer](/.devcontainer) configuration. See the /vista directory in the repo for the underlying VistA/IRIS config files.
 
-  - Run setup.sh to download the FOIA version of VistA and start community version of Intersytems IRIS. *Update: This script will create a generic Provider user and then run VistJS to verify successful install. The routine I used to do this is from https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
-  
-  - Unfortunately the VA has made the FOIA Version of VistA too large for the community version of Intersystems IRIS. I have compacted the latest version and this repo uses that by default (2022_09_07).  But you can use any version of VistA you would like or uncomment the FOIA version if you have a licnesed version of iris. 
-  
-   - ** Update - I have been talking to the VA staff that releases FOIA version about defragging / compacting / truncating it before posting. 
+  - Open this repo in a GitHub Codespace (or "Reopen in Container" locally with Docker + the Dev Containers extension). The devcontainer will build the InterSystems IRIS Community image and install Node.js automatically.
+  - On first start, `.devcontainer/post-create.sh` downloads the FOIA version of VistA (the compacted 2022_09_07 release), extracts `IRIS.DAT`, and sets required permissions.
+  - `.devcontainer/start-iris.sh` runs on every container start: it starts the IRIS instance, applies the `merge.cpf` config to create the VISTA namespace/database, and (on first run only) loads XUSRB1/SMEINT and creates a generic Provider user. The routine used to create the user is from https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
 
-   - ** Update - THe latest version of FOIA VistA is now < 10gig.  
+  - Unfortunately the VA has made the FOIA Version of VistA too large for the community version of Intersystems IRIS. I have compacted the latest version and this repo uses that by default (2022_09_07).  But you can update the URL/ZIP variables in [post-create.sh](/.devcontainer/post-create.sh) to use any version of VistA you would like, or a licensed version of IRIS if you have one.
 
-   -  ** Update - The codespace version in the repo no longer works as of 2025.  codespaces changed the way they handle docker containers.  I am working on a new version of this repo that will work with the latest version of codespaces conming soon.
-   
-  - To RESET VistA back to the begiining run the reset.sh script. <-- This deletes everything!
+   - ** Update - I have been talking to the VA staff that releases FOIA version about defragging / compacting / truncating it before posting.
+
+   - ** Update - THe latest version of FOIA VistA is now < 10gig.
+
+   - ** Update - Codespaces changed the way they handle Docker containers in 2025, which broke the old docker-compose based setup in this repo. This has been replaced with a `.devcontainer` configuration that works with the current Codespaces container support.
+
+  - To reset VistA back to the beginning, delete the `vista/data` directory and rebuild the container (or delete the Codespace and create a new one). This removes everything, including the downloaded database.
 
   # Accessing Management portal of Intersystems
 
@@ -36,7 +38,7 @@ This repository has an implementation that will run the FOIA version of VistA fo
 
   # Logging into VistA
 
-  After the setup script has run, source your .bashhrc to add the follwoing aliases or start a new shell.
+  The devcontainer sets up shell aliases automatically on first run. Open a new terminal (or run `source ~/.bashrc`) to pick them up.
 
 
   - You can log into VistA with the following from the shell prompt.
@@ -52,8 +54,8 @@ This repository has an implementation that will run the FOIA version of VistA fo
       ``
         prog
       ``
-  - you can get to the iris container by typing the following from the shell prompt.
-  
+  - you can get an interactive shell as the IRIS owner by typing the following from the shell prompt.
+
       ``
         iris
       ``
@@ -64,9 +66,7 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
 
 # FOIA and Access / Verify Code
 
- - The JS library in this repo will not work with the FOIA version of Vista.  It has to do with the FOIA version not having the VA encryption. More information can be found [here](https://groups.google.com/g/hardhats/c/egI15djGp5A/m/ZuWf785pQy0J).  I have included a copy from this thread in this repo [xusrb1.xml](/vista/xusrb1.xml). Below is a scrit to fix this.  
-
- - On the Docker container (iris) /tmp/xusrb1fix.sh.  Update: I have included this in the setup.sh script so there is no need to run this independently. 
+ - The JS library in this repo will not work with the FOIA version of Vista.  It has to do with the FOIA version not having the VA encryption. More information can be found [here](https://groups.google.com/g/hardhats/c/egI15djGp5A/m/ZuWf785pQy0J).  I have included a copy from this thread in this repo [xusrb1.xml](/vista/xusrb1.xml). This fix is applied automatically by [start-iris.sh](/.devcontainer/start-iris.sh) on first container start, so there is no need to run it independently.
 
 
 # BSE Tokin Authentication to VistA 
