@@ -19,7 +19,10 @@ chown -R 51773:51773 "$DATA_DIR"
 chmod -R 775 "$DATA_DIR"
 
 start_iris() {
-    su irisowner -c "iris start IRIS" || echo "[start-iris] IRIS may already be running"
+    # setsid fully detaches the IRIS control process from postStartCommand's
+    # session, so it isn't torn down once this script exits (same issue we
+    # hit with xinetd - devcontainer teardown kills anything left in-session)
+    setsid su irisowner -c "iris start IRIS" < /dev/null || echo "[start-iris] IRIS may already be running"
 }
 
 echo "[start-iris] Starting IRIS instance..."
