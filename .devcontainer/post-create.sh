@@ -34,7 +34,7 @@ if [ ! -f "$DAT_FILE" ]; then
     
     if wget -q --show-progress -P /workspace/vista/data/dat/vista "https://$VISTA_URL/$VISTA_ZIP"; then
         echo "Download complete - extracting..."
-        unzip -q /workspace/vista/data/dat/vista/$VISTA_ZIP -d /workspace/vista/data/dat/vista
+        unzip /workspace/vista/data/dat/vista/$VISTA_ZIP -d /workspace/vista/data/dat/vista
         rm /workspace/vista/data/dat/vista/$VISTA_ZIP
         
         if [ -f "$DAT_FILE" ]; then
