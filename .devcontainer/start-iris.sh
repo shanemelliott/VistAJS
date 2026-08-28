@@ -4,17 +4,19 @@
 # must be started explicitly here instead of relying on entrypoint.sh.
 set -e
 
+DATA_DIR=/workspace/vista/data
+
 # Ensure directories and merge.cpf exist - do not depend on postCreateCommand
 # having run first, since Codespaces can run postStartCommand before it.
-mkdir -p /vistadata/merge /vistadata/dat/vista /vistadata/iris_conf.d
-if [ ! -f /vistadata/merge/merge.cpf ] && [ -f /workspace/vista/merge.cpf ]; then
+mkdir -p "$DATA_DIR/merge" "$DATA_DIR/dat/vista" "$DATA_DIR/iris_conf.d"
+if [ ! -f "$DATA_DIR/merge/merge.cpf" ] && [ -f /workspace/vista/merge.cpf ]; then
     echo "[start-iris] Generating merge.cpf..."
-    sed 's#/dur/#/vistadata/#g' /workspace/vista/merge.cpf > /vistadata/merge/merge.cpf
+    sed "s#/dur/#$DATA_DIR/#g" /workspace/vista/merge.cpf > "$DATA_DIR/merge/merge.cpf"
 fi
 
-echo "[start-iris] Fixing ownership of /vistadata for IRIS (51773:51773)..."
-chown -R 51773:51773 /vistadata
-chmod -R 775 /vistadata
+echo "[start-iris] Fixing ownership of $DATA_DIR for IRIS (51773:51773)..."
+chown -R 51773:51773 "$DATA_DIR"
+chmod -R 775 "$DATA_DIR"
 
 echo "[start-iris] Starting IRIS instance..."
 su irisowner -c "iris start IRIS" || echo "[start-iris] IRIS may already be running"
@@ -39,10 +41,10 @@ fi
 # The VISTA namespace/database is created by merging merge.cpf - normally done
 # automatically by the base image's own entrypoint on first boot, which devcontainers
 # bypasses, so it must be applied and activated manually here.
-MERGE_MARKER=/vistadata/.vistajs-merged
+MERGE_MARKER="$DATA_DIR/.vistajs-merged"
 if [ ! -f "$MERGE_MARKER" ]; then
     echo "[start-iris] Merging VISTA namespace/database config from merge.cpf..."
-    su irisowner -c "iris merge IRIS /vistadata/merge/merge.cpf"
+    su irisowner -c "iris merge IRIS $DATA_DIR/merge/merge.cpf"
 
     echo "[start-iris] Restarting IRIS to activate merged config..."
     su irisowner -c "iris stop IRIS quietly" || true
@@ -63,13 +65,13 @@ else
 fi
 
 # Only run the routine load / user creation once per durable data volume
-MARKER=/vistadata/.vistajs-initialized
+MARKER="$DATA_DIR/.vistajs-initialized"
 if [ ! -f "$MARKER" ]; then
     echo "[start-iris] First run - loading XUSRB1 and SMEINT routines..."
-    su irisowner -c "iris session IRIS < /tmp/xusrb1fix.script" || echo "[start-iris] Warning: routine load had issues"
+    su irisowner -c "iris session IRIS < /opt/vistajs/xusrb1fix.script" || echo "[start-iris] Warning: routine load had issues"
 
     echo "[start-iris] Creating initial user..."
-    su irisowner -c "iris session IRIS < /tmp/CreateUser.script" || echo "[start-iris] Warning: user creation had issues"
+    su irisowner -c "iris session IRIS < /opt/vistajs/CreateUser.script" || echo "[start-iris] Warning: user creation had issues"
 
     touch "$MARKER"
 else
