@@ -20,12 +20,12 @@
     }
   },
   
-  "forwardPorts": [52773, 1972, 9093, 9096],
+  "forwardPorts": [52773, 1972, 19301, 18301],
   "portsAttributes": {
     "52773": {"label": "IRIS Management", "onAutoForward": "notify"},
     "1972": {"label": "IRIS SuperServer", "onAutoForward": "notify"},
-    "9093": {"label": "IRIS XWB", "onAutoForward": "notify"},
-    "9096": {"label": "IRIS WebSocket", "onAutoForward": "notify"}
+    "19301": {"label": "VistA RPC Broker", "onAutoForward": "notify"},
+    "18301": {"label": "VistaLink", "onAutoForward": "notify"}
   },
   
   "postCreateCommand": "bash /workspace/.devcontainer/post-create.sh",

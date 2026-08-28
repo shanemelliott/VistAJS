@@ -59,6 +59,24 @@ else
     echo "IRIS.DAT found - using existing database"
 fi
 
+# Generate config.js for the test user created by start-iris.sh (see vista/smeint.xml
+# for the Access/Verify codes), pointing at the xinetd RPC broker port (see vista/stg_rpc)
+if [ ! -f "/workspace/config.js" ] && [ -f "/workspace/config.sample.js" ]; then
+    echo "Generating config.js with default VistA test user credentials..."
+    cat > /workspace/config.js << 'EOF'
+module.exports = {
+    context: '',
+    host: 'localhost',
+    port: 19301,
+    accessCode: 'VISTAJS123',
+    verifyCode: 'VISTAJS123!!',
+    localIP: '',
+    localAddress: '',
+    samlToken: ''
+};
+EOF
+fi
+
 # Setup shell aliases (devcontainer runs inside the IRIS container already, no docker exec needed).
 # IRIS commands must run as irisowner, so wrap with su when the terminal is root.
 echo "Setting up shell aliases..."
