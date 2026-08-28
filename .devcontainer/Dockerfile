@@ -17,7 +17,10 @@ COPY vista/xusrb1fix.script /tmp/xusrb1fix.script
 COPY vista/CreateUser.script /tmp/CreateUser.script
 COPY .devcontainer/entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /xinetd.sh /entrypoint.sh
+# Normalize line endings (source files may have CRLF from Windows git checkouts,
+# which breaks shell shebangs with "cannot execute: required file not found")
+RUN sed -i 's/\r$//' /xinetd.sh /entrypoint.sh /tmp/xusrb1fix.script /tmp/CreateUser.script \
+    && chmod +x /xinetd.sh /entrypoint.sh
 
 # Ensure data directories exist
 RUN mkdir -p /vistadata/iris_conf.d /vistadata/merge /vistadata/dat/vista
