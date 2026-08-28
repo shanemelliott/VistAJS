@@ -19,10 +19,11 @@ echo "Setting directory permissions for IRIS user..."
 chown -R 51773:51773 /workspace/vista/data
 chmod -R 775 /workspace/vista/data
 
-# Copy config file if it exists
+# Copy config file if it exists, rewriting the database path since the
+# original merge.cpf targets /dur (docker-compose flow) but the devcontainer mounts /vistadata
 if [ -f "/workspace/vista/merge.cpf" ]; then
     echo "Copying merge.cpf to data directory..."
-    cp /workspace/vista/merge.cpf /workspace/vista/data/merge/merge.cpf
+    sed 's#/dur/#/vistadata/#g' /workspace/vista/merge.cpf > /workspace/vista/data/merge/merge.cpf
 fi
 
 # Check for VistA DAT file and download if needed

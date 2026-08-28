@@ -28,6 +28,32 @@ if [ $attempt -eq $max_attempts ]; then
     exit 1
 fi
 
+# The VISTA namespace/database is created by merging merge.cpf - normally done
+# automatically by the base image's own entrypoint on first boot, which devcontainers
+# bypasses, so it must be applied and activated manually here.
+MERGE_MARKER=/vistadata/.vistajs-merged
+if [ ! -f "$MERGE_MARKER" ]; then
+    echo "[start-iris] Merging VISTA namespace/database config from merge.cpf..."
+    su irisowner -c "iris merge IRIS /vistadata/merge/merge.cpf"
+
+    echo "[start-iris] Restarting IRIS to activate merged config..."
+    su irisowner -c "iris stop IRIS quietly" || true
+    su irisowner -c "iris start IRIS"
+
+    attempt=0
+    while [ $attempt -lt $max_attempts ]; do
+        if su irisowner -c "iris session IRIS -c 'q'" >/dev/null 2>&1; then
+            break
+        fi
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+
+    touch "$MERGE_MARKER"
+else
+    echo "[start-iris] merge.cpf already applied - skipping"
+fi
+
 # Only run the routine load / user creation once per durable data volume
 MARKER=/vistadata/.vistajs-initialized
 if [ ! -f "$MARKER" ]; then
