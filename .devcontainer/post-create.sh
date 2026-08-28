@@ -88,7 +88,7 @@ alias prog='su irisowner -c "iris session iris -U VISTA"'
 alias PROG='su irisowner -c "iris session iris -U VISTA"'
 alias vista='su irisowner -c "iris session iris -U VISTA \"^ZU\""'
 alias VISTA='su irisowner -c "iris session iris -U VISTA \"^ZU\""'
-alias iris='su irisowner'
+alias irisowner='su irisowner'
 EOF
 
 # Install Node dependencies
