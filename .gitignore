@@ -12,6 +12,9 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 #config
 db.js
 
+# VistA/IRIS runtime data (downloaded DAT file + IRIS instance state, do not commit)
+vista/data/
+
 # Runtime data
 pids
 *.pid

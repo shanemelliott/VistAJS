@@ -1,0 +1,48 @@
+{
+  "name": "VistA Development Container",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  
+  "containerEnv": {
+    "ISC_CPF_MERGE_FILE": "/vistadata/merge/merge.cpf",
+    "ISC_DATA_DIRECTORY": "/vistadata/iris_conf.d"
+  },
+  
+  "mounts": [
+    "source=${localWorkspaceFolder}/vista/data,target=/vistadata,type=bind,consistency=cached",
+    "source=/etc/timezone,target=/etc/timezone,type=bind,readonly=true"
+  ],
+  
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+  
+  "forwardPorts": [52773, 1972, 9093, 9096],
+  "portsAttributes": {
+    "52773": {"label": "IRIS Management", "onAutoForward": "notify"},
+    "1972": {"label": "IRIS SuperServer", "onAutoForward": "notify"},
+    "9093": {"label": "IRIS XWB", "onAutoForward": "notify"},
+    "9096": {"label": "IRIS WebSocket", "onAutoForward": "notify"}
+  },
+  
+  "postCreateCommand": "bash /workspace/.devcontainer/post-create.sh",
+  "postStartCommand": "bash /workspace/.devcontainer/start-iris.sh",
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-mssql.mssql"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  
+  "remoteUser": "root"
+}
