@@ -14,12 +14,9 @@ mkdir -p /workspace/vista/data/merge
 mkdir -p /workspace/vista/data/dat/vista
 mkdir -p /workspace/vista/data/iris_conf.d
 
-# Set ownership to the irisowner user - required for IRIS to write to mounted volumes.
-# Looked up dynamically since the UID/GID can differ between IRIS image versions.
-IRIS_UID=$(id -u irisowner)
-IRIS_GID=$(id -g irisowner)
-echo "Setting directory permissions for irisowner ($IRIS_UID:$IRIS_GID)..."
-chown -R "$IRIS_UID:$IRIS_GID" /workspace/vista/data
+# Set ownership to IRIS user (51773) - required for IRIS to write to mounted volumes
+echo "Setting directory permissions for IRIS user..."
+chown -R 51773:51773 /workspace/vista/data
 chmod -R 775 /workspace/vista/data
 
 # Copy config file if it exists

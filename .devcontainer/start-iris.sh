@@ -4,11 +4,8 @@
 # must be started explicitly here instead of relying on entrypoint.sh.
 set -e
 
-IRIS_UID=$(id -u irisowner)
-IRIS_GID=$(id -g irisowner)
-
-echo "[start-iris] Fixing ownership of /vistadata for irisowner ($IRIS_UID:$IRIS_GID)..."
-chown -R "$IRIS_UID:$IRIS_GID" /vistadata
+echo "[start-iris] Fixing ownership of /vistadata for IRIS (51773:51773)..."
+chown -R 51773:51773 /vistadata
 chmod -R 775 /vistadata
 
 echo "[start-iris] Starting IRIS instance..."
