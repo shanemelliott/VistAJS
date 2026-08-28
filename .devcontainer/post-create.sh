@@ -57,11 +57,16 @@ else
     echo "IRIS.DAT found - using existing database"
 fi
 
-# Setup bashrc
-if [ -f "/workspace/vista/bashrc" ]; then
-    echo "Setting up shell aliases..."
-    cat /workspace/vista/bashrc >> ~/.bashrc
-fi
+# Setup shell aliases (devcontainer runs inside the IRIS container already, no docker exec needed)
+echo "Setting up shell aliases..."
+cat >> ~/.bashrc << 'EOF'
+
+# VistA Shortcuts (devcontainer - runs directly, no docker exec)
+alias prog='iris session iris -U VISTA'
+alias PROG='iris session iris -U VISTA'
+alias vista='iris session iris -U VISTA "^ZU"'
+alias VISTA='iris session iris -U VISTA "^ZU"'
+EOF
 
 # Install Node dependencies
 echo "Installing Node dependencies..."
