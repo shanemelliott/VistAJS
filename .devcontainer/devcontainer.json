@@ -6,12 +6,11 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
   
   "containerEnv": {
-    "ISC_CPF_MERGE_FILE": "/vistadata/merge/merge.cpf",
-    "ISC_DATA_DIRECTORY": "/vistadata/iris_conf.d"
+    "ISC_CPF_MERGE_FILE": "/workspace/vista/data/merge/merge.cpf",
+    "ISC_DATA_DIRECTORY": "/workspace/vista/data/iris_conf.d"
   },
   
   "mounts": [
-    "source=${localWorkspaceFolder}/vista/data,target=/vistadata,type=bind,consistency=cached",
     "source=/etc/timezone,target=/etc/timezone,type=bind,readonly=true"
   ],
   

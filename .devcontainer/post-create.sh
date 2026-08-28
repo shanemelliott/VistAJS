@@ -20,10 +20,10 @@ chown -R 51773:51773 /workspace/vista/data
 chmod -R 775 /workspace/vista/data
 
 # Copy config file if it exists, rewriting the database path since the
-# original merge.cpf targets /dur (docker-compose flow) but the devcontainer mounts /vistadata
+# original merge.cpf targets /dur (docker-compose flow) but the devcontainer uses vista/data
 if [ -f "/workspace/vista/merge.cpf" ]; then
     echo "Copying merge.cpf to data directory..."
-    sed 's#/dur/#/vistadata/#g' /workspace/vista/merge.cpf > /workspace/vista/data/merge/merge.cpf
+    sed 's#/dur/#/workspace/vista/data/#g' /workspace/vista/merge.cpf > /workspace/vista/data/merge/merge.cpf
 fi
 
 # Check for VistA DAT file and download if needed
@@ -40,6 +40,7 @@ if [ ! -f "$DAT_FILE" ]; then
         
         if [ -f "$DAT_FILE" ]; then
             echo "IRIS.DAT extracted successfully"
+            chown 51773:51773 "$DAT_FILE"
             chmod 644 "$DAT_FILE"
         else
             echo "ERROR: IRIS.DAT not found after extraction"
