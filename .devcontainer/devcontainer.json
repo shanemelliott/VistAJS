@@ -30,6 +30,7 @@
   },
   
   "postCreateCommand": "bash /workspace/.devcontainer/post-create.sh",
+  "postStartCommand": "bash /workspace/.devcontainer/start-iris.sh",
   
   "customizations": {
     "vscode": {

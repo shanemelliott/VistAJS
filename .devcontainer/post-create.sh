@@ -14,9 +14,12 @@ mkdir -p /workspace/vista/data/merge
 mkdir -p /workspace/vista/data/dat/vista
 mkdir -p /workspace/vista/data/iris_conf.d
 
-# Set ownership to IRIS user (51773) - required for IRIS to write to mounted volumes
-echo "Setting directory permissions for IRIS user..."
-chown -R 51773:51773 /workspace/vista/data
+# Set ownership to the irisowner user - required for IRIS to write to mounted volumes.
+# Looked up dynamically since the UID/GID can differ between IRIS image versions.
+IRIS_UID=$(id -u irisowner)
+IRIS_GID=$(id -g irisowner)
+echo "Setting directory permissions for irisowner ($IRIS_UID:$IRIS_GID)..."
+chown -R "$IRIS_UID:$IRIS_GID" /workspace/vista/data
 chmod -R 775 /workspace/vista/data
 
 # Copy config file if it exists
@@ -57,15 +60,18 @@ else
     echo "IRIS.DAT found - using existing database"
 fi
 
-# Setup shell aliases (devcontainer runs inside the IRIS container already, no docker exec needed)
+# Setup shell aliases (devcontainer runs inside the IRIS container already, no docker exec needed).
+# IRIS commands must run as irisowner, so wrap with su when the terminal is root.
 echo "Setting up shell aliases..."
 cat >> ~/.bashrc << 'EOF'
 
 # VistA Shortcuts (devcontainer - runs directly, no docker exec)
-alias prog='iris session iris -U VISTA'
-alias PROG='iris session iris -U VISTA'
-alias vista='iris session iris -U VISTA "^ZU"'
-alias VISTA='iris session iris -U VISTA "^ZU"'
+[ -f /etc/bash_completion ] && . /etc/bash_completion
+alias prog='su irisowner -c "iris session iris -U VISTA"'
+alias PROG='su irisowner -c "iris session iris -U VISTA"'
+alias vista='su irisowner -c "iris session iris -U VISTA \"^ZU\""'
+alias VISTA='su irisowner -c "iris session iris -U VISTA \"^ZU\""'
+alias iris='su irisowner'
 EOF
 
 # Install Node dependencies
