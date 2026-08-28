@@ -17,8 +17,9 @@ COPY vista/xusrb1fix.script /opt/vistajs/xusrb1fix.script
 COPY vista/CreateUser.script /opt/vistajs/CreateUser.script
 
 # Normalize line endings (source files may have CRLF from Windows git checkouts,
-# which breaks shell shebangs with "cannot execute: required file not found")
+# which breaks shell shebangs and xinetd's config parser)
 RUN sed -i 's/\r$//' /xinetd.sh /opt/vistajs/xusrb1fix.script /opt/vistajs/CreateUser.script \
+    /etc/xinetd.d/stg_rpc /etc/xinetd.d/stg_vlk \
     && chmod +x /xinetd.sh
 
 USER ${ISC_PACKAGE_MGRUSER}
