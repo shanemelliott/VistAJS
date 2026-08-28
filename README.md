@@ -72,6 +72,9 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
 # BSE Tokin Authentication to VistA 
  - BSE token authentication support has been added to the VistAJS library, also called the "visitor pattern".  This dempnstrates how to use a VA issued service account to authenticate to VistA and execute RPC calls. look at [bseLogin.js](/bseLogin.js) for more information.  The VistaJSLibray has also been updated to support the 'global' RPC parameter type. 
 
+# SAML Login to VistA (VA PIV)
+
+ - [samlLogin.js](/samlLogin.js) tests VA PIV SAML authentication to VistA. It depends on a VA SAML token getter service that runs locally on your desktop and is not shared externally in this repo, so this script will not work out of the box for other users.
 
 
 
