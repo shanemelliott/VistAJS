@@ -80,7 +80,17 @@ fi
 
 echo "[start-iris] Starting xinetd..."
 if ! pgrep -x xinetd >/dev/null 2>&1; then
-    /xinetd.sh &
+    # setsid/nohup fully detach xinetd so it survives after this script exits
+    # (a plain "&" background job can be killed when postStartCommand's shell exits)
+    nohup setsid /xinetd.sh < /dev/null > /var/log/xinetd-start.log 2>&1 &
+    disown
+    sleep 1
+    if pgrep -x xinetd >/dev/null 2>&1; then
+        echo "[start-iris] xinetd started"
+    else
+        echo "[start-iris] WARNING: xinetd did not start - see /var/log/xinetd-start.log"
+        cat /var/log/xinetd-start.log 2>/dev/null
+    fi
 else
     echo "[start-iris] xinetd already running"
 fi
