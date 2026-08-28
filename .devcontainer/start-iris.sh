@@ -68,7 +68,7 @@ if [ ! -f "$MERGE_MARKER" ]; then
 
     echo "[start-iris] Restarting IRIS to activate merged config..."
     su irisowner -c "iris stop IRIS quietly" || true
-    su irisowner -c "iris start IRIS"
+    setsid su irisowner -c "iris start IRIS" < /dev/null
 
     attempt=0
     while [ $attempt -lt $max_attempts ]; do
@@ -97,6 +97,22 @@ if [ ! -f "$MARKER" ]; then
     su irisowner -c "iris session IRIS < /opt/vistajs/CreateUser.script" || { echo "[start-iris] Warning: user creation had issues"; USER_CREATE_OK=0; }
 
     if [ "$ROUTINE_LOAD_OK" -eq 1 ] && [ "$USER_CREATE_OK" -eq 1 ]; then
+        # IRIS only guarantees writes are durably flushed to disk on a clean
+        # shutdown/checkpoint - without this, the new user can appear to be
+        # created but be lost if IRIS is interrupted before its next checkpoint
+        echo "[start-iris] Restarting IRIS to checkpoint newly created user/routines to disk..."
+        su irisowner -c "iris stop IRIS quietly" || true
+        setsid su irisowner -c "iris start IRIS" < /dev/null
+
+        attempt=0
+        while [ $attempt -lt $max_attempts ]; do
+            if su irisowner -c "iris session IRIS -c 'q'" >/dev/null 2>&1; then
+                break
+            fi
+            sleep 2
+            attempt=$((attempt + 1))
+        done
+
         touch "$MARKER"
     else
         echo "[start-iris] Not marking as initialized due to errors above - will retry on next start"
