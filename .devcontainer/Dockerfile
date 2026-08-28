@@ -4,7 +4,7 @@ FROM $IMAGE
 USER root
 
 RUN apt-get update \
-    && apt-get -y install xinetd vim git curl wget \
+    && apt-get -y install xinetd vim git curl wget unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy VistA configuration and initialization files
