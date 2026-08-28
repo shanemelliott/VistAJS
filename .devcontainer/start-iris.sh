@@ -18,8 +18,25 @@ echo "[start-iris] Fixing ownership of $DATA_DIR for IRIS (51773:51773)..."
 chown -R 51773:51773 "$DATA_DIR"
 chmod -R 775 "$DATA_DIR"
 
+start_iris() {
+    su irisowner -c "iris start IRIS" || echo "[start-iris] IRIS may already be running"
+}
+
 echo "[start-iris] Starting IRIS instance..."
-su irisowner -c "iris start IRIS" || echo "[start-iris] IRIS may already be running"
+start_iris
+
+# IRIS's own internal startup can briefly run privileged steps and hand
+# ownership back to irisowner when done. If that gets interrupted (e.g. a
+# Codespaces disconnect), the instance is left "indeterminate"/inaccessible.
+# Detect that and self-heal by force-stopping, re-chowning, and retrying once.
+STATUS=$(su irisowner -c "iris list IRIS" 2>/dev/null)
+if echo "$STATUS" | grep -qiE "indeterminate|inaccessible"; then
+    echo "[start-iris] Detected indeterminate/inaccessible IRIS state - recovering..."
+    su irisowner -c "iris stop IRIS force quietly" 2>/dev/null || true
+    chown -R 51773:51773 "$DATA_DIR"
+    chmod -R 775 "$DATA_DIR"
+    start_iris
+fi
 
 echo "[start-iris] Waiting for IRIS to accept sessions..."
 max_attempts=30
