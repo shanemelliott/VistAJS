@@ -54,10 +54,15 @@ This repository has an implementation that will run the FOIA version of VistA fo
       ``
         prog
       ``
+  - You can log into the VISTA namespace directly with the following from the shell prompt.
+
+      ``
+        vista
+      ``
   - you can get an interactive shell as the IRIS owner by typing the following from the shell prompt.
 
       ``
-        iris
+        irisowner
       ``
 
 # Xinetd
@@ -71,6 +76,32 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
 
 # BSE Tokin Authentication to VistA 
  - BSE token authentication support has been added to the VistAJS library, also called the "visitor pattern".  This dempnstrates how to use a VA issued service account to authenticate to VistA and execute RPC calls. look at [bseLogin.js](/bseLogin.js) for more information.  The VistaJSLibray has also been updated to support the 'global' RPC parameter type. 
+
+# Troubleshooting the Codespace/devcontainer VistA setup
+
+  - **"Not a valid ACCESS CODE/VERIFY CODE pair" even though the creation log shows the user was created**: On first boot, IRIS can be interrupted (e.g. an unclean shutdown triggering a WIJ recovery prompt) before the `CreateUser.script` transactions are flushed to disk, so the user appears to have been created in the log but isn't actually persisted. Re-run the init scripts manually to fix it:
+    ```
+    rm /workspace/vista/data/.vistajs-initialized
+    su irisowner -c "iris session IRIS < /opt/vistajs/xusrb1fix.script"
+    su irisowner -c "iris session IRIS < /opt/vistajs/CreateUser.script"
+    ```
+
+  - **IRIS shows status "indeterminate" or sessions get killed immediately**: This usually follows an interrupted startup/shutdown. Force a clean stop and restart:
+    ```
+    su irisowner -c "iris stop IRIS force quietly"
+    su irisowner -c "iris start IRIS"
+    ```
+
+  - **`iris` command doesn't behave as expected / runs `su irisowner` instead**: Check `alias` output - an old `.bashrc` from a previous container run may have a stale `alias iris=...`. Run `unalias iris` or open a new terminal.
+
+  - **RPC connection is refused (`ECONNREFUSED`)**: Confirm `xinetd` is actually running and bound to the RPC/VistaLink ports:
+    ```
+    ps aux | grep xinetd
+    ss -tlnp | grep -E '19301|18301'
+    ```
+    If it isn't listed, re-run `bash /workspace/.devcontainer/start-iris.sh` and check for xinetd config errors in the output.
+
+  - **Devcontainer changes don't seem to apply after "Rebuild Container"**: The devcontainer definition used for a rebuild comes from the git checkout *inside* the Codespace, not directly from GitHub. Run `git pull` inside the Codespace first, then rebuild.
 
 # SAML Login to VistA (VA PIV)
 

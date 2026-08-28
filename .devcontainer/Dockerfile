@@ -15,15 +15,13 @@ COPY vista/xusrb1.xml /opt/vistajs/xusrb1.xml
 COPY vista/xinetd.sh /xinetd.sh
 COPY vista/xusrb1fix.script /opt/vistajs/xusrb1fix.script
 COPY vista/CreateUser.script /opt/vistajs/CreateUser.script
-COPY .devcontainer/entrypoint.sh /entrypoint.sh
 
 # Normalize line endings (source files may have CRLF from Windows git checkouts,
-# which breaks shell shebangs with "cannot execute: required file not found")
-RUN sed -i 's/\r$//' /xinetd.sh /entrypoint.sh /opt/vistajs/xusrb1fix.script /opt/vistajs/CreateUser.script \
-    && chmod +x /xinetd.sh /entrypoint.sh
+# which breaks shell shebangs and xinetd's config parser)
+RUN sed -i 's/\r$//' /xinetd.sh /opt/vistajs/xusrb1fix.script /opt/vistajs/CreateUser.script \
+    /etc/xinetd.d/stg_rpc /etc/xinetd.d/stg_vlk \
+    && chmod +x /xinetd.sh
 
 USER ${ISC_PACKAGE_MGRUSER}
 
 EXPOSE 52773 1972 9093 9096
-
-ENTRYPOINT ["/entrypoint.sh"]

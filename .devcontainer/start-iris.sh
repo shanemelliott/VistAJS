@@ -18,8 +18,28 @@ echo "[start-iris] Fixing ownership of $DATA_DIR for IRIS (51773:51773)..."
 chown -R 51773:51773 "$DATA_DIR"
 chmod -R 775 "$DATA_DIR"
 
+start_iris() {
+    # setsid fully detaches the IRIS control process from postStartCommand's
+    # session, so it isn't torn down once this script exits (same issue we
+    # hit with xinetd - devcontainer teardown kills anything left in-session)
+    setsid su irisowner -c "iris start IRIS" < /dev/null || echo "[start-iris] IRIS may already be running"
+}
+
 echo "[start-iris] Starting IRIS instance..."
-su irisowner -c "iris start IRIS" || echo "[start-iris] IRIS may already be running"
+start_iris
+
+# IRIS's own internal startup can briefly run privileged steps and hand
+# ownership back to irisowner when done. If that gets interrupted (e.g. a
+# Codespaces disconnect), the instance is left "indeterminate"/inaccessible.
+# Detect that and self-heal by force-stopping, re-chowning, and retrying once.
+STATUS=$(su irisowner -c "iris list IRIS" 2>/dev/null)
+if echo "$STATUS" | grep -qiE "indeterminate|inaccessible"; then
+    echo "[start-iris] Detected indeterminate/inaccessible IRIS state - recovering..."
+    su irisowner -c "iris stop IRIS force quietly" 2>/dev/null || true
+    chown -R 51773:51773 "$DATA_DIR"
+    chmod -R 775 "$DATA_DIR"
+    start_iris
+fi
 
 echo "[start-iris] Waiting for IRIS to accept sessions..."
 max_attempts=30
@@ -48,7 +68,7 @@ if [ ! -f "$MERGE_MARKER" ]; then
 
     echo "[start-iris] Restarting IRIS to activate merged config..."
     su irisowner -c "iris stop IRIS quietly" || true
-    su irisowner -c "iris start IRIS"
+    setsid su irisowner -c "iris start IRIS" < /dev/null
 
     attempt=0
     while [ $attempt -lt $max_attempts ]; do
@@ -77,6 +97,22 @@ if [ ! -f "$MARKER" ]; then
     su irisowner -c "iris session IRIS < /opt/vistajs/CreateUser.script" || { echo "[start-iris] Warning: user creation had issues"; USER_CREATE_OK=0; }
 
     if [ "$ROUTINE_LOAD_OK" -eq 1 ] && [ "$USER_CREATE_OK" -eq 1 ]; then
+        # IRIS only guarantees writes are durably flushed to disk on a clean
+        # shutdown/checkpoint - without this, the new user can appear to be
+        # created but be lost if IRIS is interrupted before its next checkpoint
+        echo "[start-iris] Restarting IRIS to checkpoint newly created user/routines to disk..."
+        su irisowner -c "iris stop IRIS quietly" || true
+        setsid su irisowner -c "iris start IRIS" < /dev/null
+
+        attempt=0
+        while [ $attempt -lt $max_attempts ]; do
+            if su irisowner -c "iris session IRIS -c 'q'" >/dev/null 2>&1; then
+                break
+            fi
+            sleep 2
+            attempt=$((attempt + 1))
+        done
+
         touch "$MARKER"
     else
         echo "[start-iris] Not marking as initialized due to errors above - will retry on next start"

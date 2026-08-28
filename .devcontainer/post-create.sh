@@ -34,9 +34,22 @@ if [ ! -f "$DAT_FILE" ]; then
     echo ""
     
     if wget -q --show-progress -P /workspace/vista/data/dat/vista "https://$VISTA_URL/$VISTA_ZIP"; then
-        echo "Download complete - extracting..."
-        unzip /workspace/vista/data/dat/vista/$VISTA_ZIP -d /workspace/vista/data/dat/vista
-        rm /workspace/vista/data/dat/vista/$VISTA_ZIP
+        echo "Download complete - extracting (this can take several minutes for the large DAT file)..."
+
+        # unzip gives no progress for a single large file, so poll the growing
+        # output file size in the background to show it is still working
+        ZIP_PATH="/workspace/vista/data/dat/vista/$VISTA_ZIP"
+        unzip "$ZIP_PATH" -d /workspace/vista/data/dat/vista &
+        UNZIP_PID=$!
+        while kill -0 "$UNZIP_PID" 2>/dev/null; do
+            sleep 10
+            if [ -f "$DAT_FILE" ]; then
+                echo "  ...extracted $(du -h "$DAT_FILE" | cut -f1) so far"
+            fi
+        done
+        wait "$UNZIP_PID"
+
+        rm "$ZIP_PATH"
         
         if [ -f "$DAT_FILE" ]; then
             echo "IRIS.DAT extracted successfully"
@@ -88,7 +101,7 @@ alias prog='su irisowner -c "iris session iris -U VISTA"'
 alias PROG='su irisowner -c "iris session iris -U VISTA"'
 alias vista='su irisowner -c "iris session iris -U VISTA \"^ZU\""'
 alias VISTA='su irisowner -c "iris session iris -U VISTA \"^ZU\""'
-alias iris='su irisowner'
+alias irisowner='su irisowner'
 EOF
 
 # Install Node dependencies

@@ -20,4 +20,3 @@ service stg_vlk
         instances = UNLIMITED
         per_source = UNLIMITED
 }
-~

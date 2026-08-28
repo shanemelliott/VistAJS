@@ -34,4 +34,4 @@ function printJsonResult(error, result) {
     console.log(clc.cyan(inspect(output)));
 }
 console.log('Executing RPC...')
-VistaJS.callRpc(logger, configuration, 'SDES GET USER PROFILE BY DUZ', ['520824653'],printJsonResult);
+VistaJS.callRpc(logger, configuration, 'SDES GET USER PROFILE BY DUZ', ['91'],printJsonResult);
