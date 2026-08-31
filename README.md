@@ -15,10 +15,10 @@ node index.js
 This repository has an implementation that will run the FOIA version of VistA for testing VistAJS, using a [.devcontainer](/.devcontainer) configuration. See the /vista directory in the repo for the underlying VistA/IRIS config files.
 
   - Open this repo in a GitHub Codespace (or "Reopen in Container" locally with Docker + the Dev Containers extension). The devcontainer will build the InterSystems IRIS Community image and install Node.js automatically.
-  - On first start, `.devcontainer/post-create.sh` downloads the FOIA version of VistA (the compacted 2022_09_07 release), extracts `IRIS.DAT`, and sets required permissions.
-  - `.devcontainer/start-iris.sh` runs on every container start: it starts the IRIS instance, applies the `merge.cpf` config to create the VISTA namespace/database, and (on first run only) loads XUSRB1/SMEINT and creates a generic Provider user. The routine used to create the user is from https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
+  - Before the container is created, `.devcontainer/initialize.sh` runs on the host: it downloads the FOIA version of VistA (the compacted 2022_09_07 release), extracts `IRIS.DAT`, and generates `merge.cpf`. This runs first so the database is already in place before IRIS starts.
+  - The container itself does **not** override the base IRIS image's own entrypoint (`devcontainer.json` sets `"overrideCommand": false`) - it handles CPF merging, database mounting, and starting IRIS the same way it always has (matching the original `docker-compose.yml`'s `command: --check-caps false -a /xinetd.sh`). Our Dockerfile just points its `-a` action at [.devcontainer/entrypoint.sh](/.devcontainer/entrypoint.sh) (installed as `/opt/vistajs/post-init.sh`), which loads XUSRB1/SMEINT and creates a generic Provider user on first run only, then starts `xinetd`. The routine used to create the user is from https://github.com/WorldVistA/VistA-FHIR-Data-Loader/blob/master/src/SYNINIT.m
 
-  - Unfortunately the VA has made the FOIA Version of VistA too large for the community version of Intersystems IRIS. I have compacted the latest version and this repo uses that by default (2022_09_07).  But you can update the URL/ZIP variables in [post-create.sh](/.devcontainer/post-create.sh) to use any version of VistA you would like, or a licensed version of IRIS if you have one.
+  - Unfortunately the VA has made the FOIA Version of VistA too large for the community version of Intersystems IRIS. I have compacted the latest version and this repo uses that by default (2022_09_07).  But you can update the URL/ZIP variables in [initialize.sh](/.devcontainer/initialize.sh) to use any version of VistA you would like, or a licensed version of IRIS if you have one.
 
    - ** Update - I have been talking to the VA staff that releases FOIA version about defragging / compacting / truncating it before posting.
 
@@ -71,7 +71,7 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
 
 # FOIA and Access / Verify Code
 
- - The JS library in this repo will not work with the FOIA version of Vista.  It has to do with the FOIA version not having the VA encryption. More information can be found [here](https://groups.google.com/g/hardhats/c/egI15djGp5A/m/ZuWf785pQy0J).  I have included a copy from this thread in this repo [xusrb1.xml](/vista/xusrb1.xml). This fix is applied automatically by [start-iris.sh](/.devcontainer/start-iris.sh) on first container start, so there is no need to run it independently.
+ - The JS library in this repo will not work with the FOIA version of Vista.  It has to do with the FOIA version not having the VA encryption. More information can be found [here](https://groups.google.com/g/hardhats/c/egI15djGp5A/m/ZuWf785pQy0J).  I have included a copy from this thread in this repo [xusrb1.xml](/vista/xusrb1.xml). This fix is applied automatically by [entrypoint.sh](/.devcontainer/entrypoint.sh) on first container start, so there is no need to run it independently.
 
 
 # BSE Tokin Authentication to VistA 
@@ -79,16 +79,12 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
 
 # Troubleshooting the Codespace/devcontainer VistA setup
 
-  - **"Not a valid ACCESS CODE/VERIFY CODE pair" even though the creation log shows the user was created**: On first boot, IRIS can be interrupted (e.g. an unclean shutdown triggering a WIJ recovery prompt) before the `CreateUser.script` transactions are flushed to disk, so the user appears to have been created in the log but isn't actually persisted. Re-run the init scripts manually to fix it:
+  - **"Not a valid ACCESS CODE/VERIFY CODE pair" even though the creation log shows the user was created**: Re-run the init scripts manually to fix it (as `irisowner`, since the container's main process now runs as `irisowner`, not `root`):
     ```
     rm /workspace/vista/data/.vistajs-initialized
     su irisowner -c "iris session IRIS < /opt/vistajs/xusrb1fix.script"
     su irisowner -c "iris session IRIS < /opt/vistajs/CreateUser.script"
-    ```
-
-  - **IRIS shows status "indeterminate" or sessions get killed immediately**: This usually follows an interrupted startup/shutdown. Force a clean stop and restart:
-    ```
-    su irisowner -c "iris stop IRIS force quietly"
+    su irisowner -c "iris stop IRIS quietly"
     su irisowner -c "iris start IRIS"
     ```
 
@@ -99,9 +95,11 @@ The VistA setup in this repo uses Xinted for RPC Broker and VistaLink.  There is
     ps aux | grep xinetd
     ss -tlnp | grep -E '19301|18301'
     ```
-    If it isn't listed, re-run `bash /workspace/.devcontainer/start-iris.sh` and check for xinetd config errors in the output.
+    If it isn't listed, check the container logs for errors from `/opt/vistajs/post-init.sh` or `xinetd`'s own config parsing.
 
   - **Devcontainer changes don't seem to apply after "Rebuild Container"**: The devcontainer definition used for a rebuild comes from the git checkout *inside* the Codespace, not directly from GitHub. Run `git pull` inside the Codespace first, then rebuild.
+
+  - **IRIS.DAT missing or the container starts before it finishes downloading**: The download now happens in `.devcontainer/initialize.sh`, which runs on the host *before* the container is created. Check that step's output in the Codespace creation log if the database seems empty.
 
 # SAML Login to VistA (VA PIV)
 
