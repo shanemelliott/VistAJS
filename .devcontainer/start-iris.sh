@@ -25,38 +25,44 @@ start_iris() {
     setsid su irisowner -c "iris start IRIS" < /dev/null || echo "[start-iris] IRIS may already be running"
 }
 
-echo "[start-iris] Starting IRIS instance..."
-start_iris
+wait_for_iris() {
+    local attempt=0
+    while [ $attempt -lt 30 ]; do
+        if su irisowner -c "iris session IRIS -c 'q'" >/dev/null 2>&1; then
+            return 0
+        fi
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+    return 1
+}
 
 # IRIS's own internal startup can briefly run privileged steps and hand
 # ownership back to irisowner when done. If that gets interrupted (e.g. a
 # Codespaces disconnect), the instance is left "indeterminate"/inaccessible.
-# Detect that and self-heal by force-stopping, re-chowning, and retrying once.
-STATUS=$(su irisowner -c "iris list IRIS" 2>/dev/null)
-if echo "$STATUS" | grep -qiE "indeterminate|inaccessible"; then
-    echo "[start-iris] Detected indeterminate/inaccessible IRIS state - recovering..."
-    su irisowner -c "iris stop IRIS force quietly" 2>/dev/null || true
-    chown -R 51773:51773 "$DATA_DIR"
-    chmod -R 775 "$DATA_DIR"
+# This wraps every start/restart point so any of them can self-heal, not just the first.
+ensure_iris_running() {
     start_iris
-fi
 
-echo "[start-iris] Waiting for IRIS to accept sessions..."
-max_attempts=30
-attempt=0
-while [ $attempt -lt $max_attempts ]; do
-    if su irisowner -c "iris session IRIS -c 'q'" >/dev/null 2>&1; then
-        echo "[start-iris] IRIS is ready"
-        break
+    local status
+    status=$(su irisowner -c "iris list IRIS" 2>/dev/null)
+    if echo "$status" | grep -qiE "indeterminate|inaccessible"; then
+        echo "[start-iris] Detected indeterminate/inaccessible IRIS state - recovering..."
+        su irisowner -c "iris stop IRIS force quietly" 2>/dev/null || true
+        chown -R 51773:51773 "$DATA_DIR"
+        chmod -R 775 "$DATA_DIR"
+        start_iris
     fi
-    sleep 2
-    attempt=$((attempt + 1))
-done
 
-if [ $attempt -eq $max_attempts ]; then
-    echo "[start-iris] ERROR: IRIS did not become ready in time"
-    exit 1
-fi
+    if ! wait_for_iris; then
+        echo "[start-iris] ERROR: IRIS did not become ready in time"
+        exit 1
+    fi
+}
+
+echo "[start-iris] Starting IRIS instance..."
+ensure_iris_running
+echo "[start-iris] IRIS is ready"
 
 # The VISTA namespace/database is created by merging merge.cpf - normally done
 # automatically by the base image's own entrypoint on first boot, which devcontainers
@@ -68,16 +74,7 @@ if [ ! -f "$MERGE_MARKER" ]; then
 
     echo "[start-iris] Restarting IRIS to activate merged config..."
     su irisowner -c "iris stop IRIS quietly" || true
-    setsid su irisowner -c "iris start IRIS" < /dev/null
-
-    attempt=0
-    while [ $attempt -lt $max_attempts ]; do
-        if su irisowner -c "iris session IRIS -c 'q'" >/dev/null 2>&1; then
-            break
-        fi
-        sleep 2
-        attempt=$((attempt + 1))
-    done
+    ensure_iris_running
 
     touch "$MERGE_MARKER"
 else
@@ -102,16 +99,7 @@ if [ ! -f "$MARKER" ]; then
         # created but be lost if IRIS is interrupted before its next checkpoint
         echo "[start-iris] Restarting IRIS to checkpoint newly created user/routines to disk..."
         su irisowner -c "iris stop IRIS quietly" || true
-        setsid su irisowner -c "iris start IRIS" < /dev/null
-
-        attempt=0
-        while [ $attempt -lt $max_attempts ]; do
-            if su irisowner -c "iris session IRIS -c 'q'" >/dev/null 2>&1; then
-                break
-            fi
-            sleep 2
-            attempt=$((attempt + 1))
-        done
+        ensure_iris_running
 
         touch "$MARKER"
     else
